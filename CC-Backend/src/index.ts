@@ -1,31 +1,29 @@
-// Importamos Express y los tipos Request y Response desde express
-// Esto nos permite tipar correctamente los parámetros de las rutas
+// Importamos express y path
 import express, { Request, Response } from "express";
+import path from "path";
+import sociosRouter from "./routes/socios.routes";
 
-// Creamos la instancia principal de la aplicación Express
+// Creamos la aplicación Express
 const app = express();
 
-// Definimos el puerto donde va a escuchar el servidor
+// Definimos el puerto del servidor
 const PORT = 3000;
 
-// Middleware que permite leer JSON en el body de las requests
+// Middleware para interpretar JSON
 app.use(express.json());
 
-// Endpoint GET raíz
-// URL: http://localhost:3000/
-app.get("/", (req: Request, res: Response) => {
-  // Respondemos con un objeto JSON simple
-  res.json({ message: "Servidor funcionando 🚀" });
+// Middleware para servir archivos estáticos
+// __dirname representa la carpeta actual compilada
+app.use(express.static(path.join(__dirname, "..", "public")));
+
+// Endpoint de prueba API
+app.get("/api/saludo", (req: Request, res: Response) => {
+  res.json({ mensaje: "Hola desde la API 🚀" });
 });
 
-// Endpoint GET /saludo
-// URL: http://localhost:3000/saludo
-app.get("/saludo", (req: Request, res: Response) => {
-  res.json({ saludo: "Hola desde Node.js + Express + TypeScript" });
-});
+app.use("/api/socios", sociosRouter);
 
-// Iniciamos el servidor HTTP
-// Si todo está correcto, veremos el mensaje en consola
+// Iniciamos el servidor
 app.listen(PORT, () => {
-  console.log(`Servidor escuchando en http://localhost:${PORT}`);
+  console.log(`Servidor activo en http://localhost:${PORT}`);
 });
