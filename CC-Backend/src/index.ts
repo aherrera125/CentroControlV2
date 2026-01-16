@@ -2,6 +2,7 @@
 import express, { Request, Response } from "express";
 import path from "path";
 import sociosRouter from "./routes/socios.routes";
+import empleadosRouter from "./routes/empleados.router";
 
 // Creamos la aplicación Express
 const app = express();
@@ -22,6 +23,8 @@ app.get("/api/saludo", (req: Request, res: Response) => {
 });
 
 app.use("/api/socios", sociosRouter);
+
+app.use("/api/empleados", empleadosRouter);
 
 // Iniciamos el servidor
 app.listen(PORT, () => {
