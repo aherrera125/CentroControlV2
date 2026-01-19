@@ -1,12 +1,13 @@
-import { employees, Employee } from "../models/employees.model";
+import { IEmployee } from "../types/IEmployee";
+import { employeesModel } from "../models/employees.model";
 
-// Devuelve todos los empleados
-export const getAllEmployees = (): Employee[] => {
-  return employees;
-};
+const getAllEmployees = (): Promise<IEmployee[]> => {
+  //employeesModel.getAllEmployees();
+  employeesModel.findAllEmployee;
 
-// Crea un nuevo empleado
-export const createEmployee = (employee: Employee): Employee => {
-  employees.push(employee);
-  return employee;
+  return [] as unknown as Promise<IEmployee[]>; // para no llorar a Typescript
 };
+const getEmployeeById = () => {};
+const createEmployee = () => {};
+const updateEmployee = () => {};
+const deleteEmployee = () => {};
