@@ -1,10 +1,8 @@
-// Importamos express y path
+import "dotenv/config";
 import express, { Request, Response } from "express";
 import path from "path";
 import empleadosRouter from "./routes/employees.routes";
-import typeEmployeesRouter from "./routes/employees.routes";
-/*import dotenv from "dotenv";
-dotenv.config();*/
+import typeEmployeesRouter from "./routes/typeEmployees.router";
 
 // Creamos la aplicación Express
 const app = express();
@@ -28,10 +26,6 @@ app.delete("/api/employees/:id", empleadosRouter);
 
 //TypeEmployees
 app.use("/api/typeEmployees", typeEmployeesRouter);
-app.get("api/typeEmployees/:id", typeEmployeesRouter);
-app.post("api/typeEmployees", typeEmployeesRouter);
-app.put("/api/typeEmployees", typeEmployeesRouter);
-app.delete("/api/typeEmployees/:id", typeEmployeesRouter);
 
 // Endpoint de prueba API
 app.get("/api/saludo", (_req: Request, res: Response) => {
