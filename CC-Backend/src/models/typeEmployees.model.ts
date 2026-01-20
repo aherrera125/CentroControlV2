@@ -1,21 +1,22 @@
 import pool from "../database/mysql";
 import { RowDataPacket } from "mysql2";
 import { ITypeEmployee } from "../types/ITypeEmployee";
+import { ResultSetHeader } from "mysql2";
 
 export type TypeEmployeeRow = ITypeEmployee & RowDataPacket;
 
-export const findAllTypeEmployee = async (): Promise<ITypeEmployee | null> => {
+export const findAllTypeEmployee = async (): Promise<ITypeEmployee[]> => {
   const [rows] = await pool.query<TypeEmployeeRow[]>(
     "SELECT * FROM TIPOEMPLEADO",
   );
-  return rows.length ? rows[0] : null;
+  return rows;
 };
 
 export const findTypeEmployee = async (
   id: string,
 ): Promise<ITypeEmployee | null> => {
   const [rows] = await pool.query<TypeEmployeeRow[]>(
-    "SELECT * FROM TIPOEMPLEADO TE WHERE TE.id = ?",
+    "SELECT * FROM TIPOEMPLEADO TE WHERE TE.idTipoEmpleado = ?",
     [id],
   );
   return rows.length ? rows[0] : null;
@@ -26,7 +27,7 @@ export const createTypeEmployee = async (
 ): Promise<number> => {
   const [typeEmployeeResult] = await pool.query<TypeEmployeeRow[]>(
     "INSERT INTO TIPOEMPLEADO (NombreTipo) VALUES (?)",
-    [typeEmployee.name],
+    [typeEmployee.NombreTipo],
   );
   return (typeEmployeeResult as any).insertId;
 };
@@ -37,17 +38,15 @@ export const updateTypeEmployee = async (
 ): Promise<ITypeEmployee | null> => {
   const [rows] = await pool.query<TypeEmployeeRow[]>(
     "UPDATE TIPOEMPLEADO TE SET NombreTipo = ? WHERE TE.id = ?",
-    [typeEmployee.name, id],
+    [typeEmployee.NombreTipo, id],
   );
   return rows.length ? rows[0] : null;
 };
 
-export const deleteTypeEmployee = async (
-  id: string,
-): Promise<ITypeEmployee | null> => {
-  const [rows] = await pool.query<TypeEmployeeRow[]>(
-    "DELETE FROM TIPOEMPLEADO WHERE id = ?",
+export const deleteTypeEmployee = async (id: number): Promise<boolean> => {
+  const [result] = await pool.query<ResultSetHeader>(
+    "DELETE FROM TIPOEMPLEADO WHERE idTipoEmpleado = ?",
     [id],
   );
-  return rows.length ? rows[0] : null;
+  return result.affectedRows > 0;
 };

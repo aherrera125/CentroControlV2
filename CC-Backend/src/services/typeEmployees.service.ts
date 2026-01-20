@@ -8,7 +8,7 @@ import {
 } from "../models/typeEmployees.model";
 
 export const getAllTypeEmployees = async () => {
-  return await findAllTypeEmployee;
+  return await findAllTypeEmployee();
 };
 export const getTypeEmployeeById = async (
   id: string,
@@ -21,6 +21,6 @@ export const addTypeEmployee = async (data: ITypeEmployee) => {
 export const editTypeEmployee = async (id: string, data: ITypeEmployee) => {
   return await updateTypeEmployee(id, data);
 };
-export const removeTypeEmployee = async (id: string) => {
+export const removeTypeEmployee = async (id: number) => {
   return await deleteTypeEmployee(id);
 };
