@@ -36,11 +36,24 @@ export const updateTypeEmployee = async (
   id: string,
   typeEmployee: ITypeEmployee,
 ): Promise<ITypeEmployee | null> => {
-  const [rows] = await pool.query<TypeEmployeeRow[]>(
-    "UPDATE TIPOEMPLEADO TE SET NombreTipo = ? WHERE TE.id = ?",
+  const [result] = await pool.query<ResultSetHeader>(
+    `UPDATE TIPOEMPLEADO
+     SET NombreTipo = ?
+     WHERE idTipoEmpleado = ?`,
     [typeEmployee.NombreTipo, id],
   );
-  return rows.length ? rows[0] : null;
+
+  if (result.affectedRows === 0) {
+    return null;
+  }
+
+  // volver a buscar la mascota actualizada
+  const [rows] = await pool.query<TypeEmployeeRow[]>(
+    "SELECT * FROM TIPOEMPLEADO WHERE idTipoEmpleado = ?",
+    [id],
+  );
+
+  return rows[0];
 };
 
 export const deleteTypeEmployee = async (id: number): Promise<boolean> => {
