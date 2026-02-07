@@ -1,13 +1,5 @@
-import { IEmployee } from "../types/IEmployee";
-import { employeesModel } from "../models/employees.model";
+import { findAllEmployee } from "../models/employees.model";
 
-const getAllEmployees = (): Promise<IEmployee[]> => {
-  //employeesModel.getAllEmployees();
-  employeesModel.findAllEmployee;
-
-  return [] as unknown as Promise<IEmployee[]>; // para no llorar a Typescript
+export const getAllEmployees = async () => {
+  return await findAllEmployee();
 };
-const getEmployeeById = () => {};
-const createEmployee = () => {};
-const updateEmployee = () => {};
-const deleteEmployee = () => {};

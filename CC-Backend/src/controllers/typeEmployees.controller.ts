@@ -5,8 +5,8 @@ import * as typeEmployeesService from "../services/typeEmployees.service";
 //getAll()
 export const getAll = async (_req: Request, res: Response) => {
   try {
-    const typeEmployees = await typeEmployeesService.getAllTypeEmployees();
-    return res.status(200).json({ typeEmployees });
+    const typeEmployeesData = await typeEmployeesService.getAllTypeEmployees();
+    return res.status(200).json({ typeEmployeesData });
   } catch (error) {
     return res
       .status(500)
@@ -17,13 +17,13 @@ export const getAll = async (_req: Request, res: Response) => {
 export const getById = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    const typeEmployee = await typeEmployeesService.getTypeEmployeeById(id);
-    if (!typeEmployee) {
+    const typeEmployeeData = await typeEmployeesService.getTypeEmployeeById(id);
+    if (!typeEmployeeData) {
       return res
         .status(404)
-        .json({ message: "Tipoe de empleado no encontrado." });
+        .json({ message: "Tipo de empleado no encontrado." });
     }
-    return res.status(200).json({ typeEmployee });
+    return res.status(200).json({ typeEmployeeData });
   } catch (error) {
     return res
       .status(500)
@@ -65,13 +65,13 @@ export const update = async (req: Request, res: Response) => {
   }
 };
 //delete()
-export const detele = async (req: Request, res: Response) => {
+export const delet = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const deleteTypeEmployee = await typeEmployeesService.removeTypeEmployee(
+    const typeEmployeeDeleted = await typeEmployeesService.removeTypeEmployee(
       Number(id),
     );
-    if (!deleteTypeEmployee) {
+    if (!typeEmployeeDeleted) {
       res.status(404).json({ message: `Tipo empleado no encontrado.` });
     }
     return res.status(200).json({

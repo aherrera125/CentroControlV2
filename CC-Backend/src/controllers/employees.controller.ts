@@ -1,21 +1,12 @@
 import { Request, Response } from "express";
-/*import * as employeeService from "../services/employees.service";
-
-export const getAllEmployees = (req: Request, res: Response) => {
-  const data = employeeService.getAllEmployees();
-  res.json(data);
-};
-
-export const addEmployee = (req: Request, res: Response) => {
-  const employee = employeeService.createEmployee(req.body);
-  res.status(201).json(employee);
-};
-*/
+import { IEmployee } from "../types/IEmployee";
+import * as employeeService from "../services/employees.service";
 
 //getAll()
-export const getAll = (req: Request, res: Response) => {
+export const getAll = async (_req: Request, res: Response) => {
   try {
-    return res.status(200).json({ message: `Empelado obtenido exitosamente.` });
+    const employeeData = employeeService.getAllEmployees();
+    return res.status(200).json({ employeeData });
   } catch (error) {
     return res.status(500).json({ message: `Error al obtener el empleado` });
   }
