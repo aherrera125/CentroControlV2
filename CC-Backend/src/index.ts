@@ -1,8 +1,9 @@
 import "dotenv/config";
-import express, { Request, Response } from "express";
-import path from "path";
-import empleadosRoutes from "./routes/employees.routes";
-import typeEmployeesRoutes from "./routes/typeEmployees.routes";
+import express from "express";
+//import path from "path";
+import membersRoutes from "./routes/members.routes";
+import usersRoutes from "./routes/users.routes";
+//import typeEmployeesRoutes from "./routes/typeEmployees.routes";
 
 // Creamos la aplicación Express
 const app = express();
@@ -14,10 +15,10 @@ const PORT = 3000;
 app.use(express.json());
 
 // Middleware para servir archivos estáticos
-app.use(express.static(path.join(__dirname, "..", "public")));
+// app.use(express.static(path.join(__dirname, "..", "public")));
 
-app.use("/api/employees", empleadosRoutes);
-app.use("/api/typeEmployees", typeEmployeesRoutes);
+app.use("/api/users", usersRoutes);
+app.use("/api/members", membersRoutes);
 
 /*app.get("/api/saludo", (_req: Request, res: Response) => {
   res.json({ mensaje: "Hola desde la API 🚀" });
