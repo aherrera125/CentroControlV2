@@ -1,5 +1,5 @@
 import pool from "../database/mysql";
-import { RowDataPacket } from "mysql2";
+import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { IUser } from "../types/IUser";
 
 export type UserRow = IUser & RowDataPacket;
@@ -28,4 +28,38 @@ export const createUser = async (
     [user.email, user.password, user.name, user.lastName, 1],
   );
   return (userResult as any).insertId;
+};
+
+export const updateUser = async (
+  id: string,
+  user: IUser,
+): Promise<IUser | null> => {
+  const [result] = await pool.query<ResultSetHeader>(
+    `UPDATE USERS
+     SET email = ?, password = ?, name = ?, lastName = ?, status = ?
+     WHERE id = ?`,
+    [user.email, user.password, user.name, user.lastName, user.status, id],
+  );
+
+  if (result.affectedRows === 0) {
+    return null;
+  }
+
+  // volver a buscar al usuario actualizada
+  const [rows] = await pool.query<UserRow[]>(
+    "SELECT * FROM USERS WHERE id = ?",
+    [id],
+  );
+
+  return rows[0];
+};
+
+export const deleteUser = async (id: string): Promise<boolean> => {
+  const [result] = await pool.query<ResultSetHeader>(
+    `UPDATE USERS
+     SET status = 0
+     WHERE id = ?`,
+    [id],
+  );
+  return result.affectedRows > 0;
 };

@@ -2,7 +2,7 @@ export interface IMember {
   id?: number;
   typeMemberId?: number;
   memberNum: number;
-  benefintNum: string;
+  benefitNum: string;
   fullName: string;
   dni: string;
   dateOfBirth: Date;
