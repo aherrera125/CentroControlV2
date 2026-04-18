@@ -2,9 +2,13 @@ import { Request, Response } from "express";
 import * as memberService from "../services/members.service";
 import { IMember } from "../types/IMember";
 
-export const getMembers = (req: Request, res: Response) => {
-  const data = memberService.getAllMembers();
-  res.json(data);
+export const getMembers = async (_req: Request, res: Response) => {
+  try {
+    const data = await memberService.getAllMembers();
+    return res.status(200).json({ data });
+  } catch (error) {
+    return res.status(500).json({ message: `Error al obtener los socios.` });
+  }
 };
 
 export const addMember = (req: Request, res: Response) => {
