@@ -1,67 +1,123 @@
-# EMPLEADO
+# API ENDPOINTS - Centro Control V2
 
-# Obtener todos los empleados
+## MEMBERS (SOCIOS)
 
-curl -X GET http://localhost:3000/api/employees
+### GET - Obtener todos los socios
 
-# Onbtener un empleado or id
+```bash
+curl -X GET http://localhost:3000/api/members
+```
 
-curl -X GET http://localhost:3000/api/employees/1
+### POST - Crear un socio
 
-# Crear un empleado
+```bash
+curl -X POST http://localhost:3000/api/members \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "typeMemberId": 1,
+    "memberNum": 1001,
+    "benefitNum": "BEN001",
+    "fullName": "Juan Carlos Pérez",
+    "dni": "12345678",
+    "dateOfBirth": "1980-05-15",
+    "phone": "1123456789",
+    "status": 1,
+    "dateAdmission": "2024-01-15",
+    "salary": 50000,
+    "address": "Calle Principal 123"
+  }'
+```
 
-curl -X POST http://localhost:3000/api/employees \
- -H "Content-Type: application/json" \
- -d '{
-"apynom": "Juan Pérez",
-"dni": 12345678,
-"domicilio": "Calle Principal 123",
-"fechaNac": "1980-05-15",
-"telefonoCelular": "1123456789",
-"telefonoFijo": "1187654321",
-"typeEmployeeId": 1
-}'
+### PUT - Actualizar datos de un socio
 
-# Editar los datos de un empleado
+```bash
+curl -X PUT http://localhost:3000/api/members \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "id": 1,
+    "typeMemberId": 2,
+    "memberNum": 1001,
+    "benefitNum": "BEN001",
+    "fullName": "Juan Carlos Pérez López",
+    "dni": "12345678",
+    "dateOfBirth": "1980-05-15",
+    "phone": "1123456789",
+    "status": 1,
+    "dateAdmission": "2024-01-15",
+    "salary": 55000,
+    "address": "Calle Nueva 456"
+  }'
+```
 
-curl -X PUT http://localhost:3000/api/employees/1 \
- -H "Content-Type: application/json" \
- -d '{
-"apynom": "Juan Carlos Pérez",
-"dni": 12345678,
-"domicilio": "Calle Nueva 456",
-"fechaNac": "1980-05-15",
-"telefonoCelular": "1123456789",
-"telefonoFijo": "1187654321",
-"typeEmployeeId": 2
-}'
+### DELETE - Eliminar un socio
 
-# Eliminar un empleado
+```bash
+curl -X DELETE http://localhost:3000/api/members \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "id": 1
+  }'
+```
 
-curl -X DELETE http://localhost:3000/api/employees/1
+---
 
-# TIPO DE EMPLEADO
+## USERS (USUARIOS)
 
-# GET /api/tipoEmepleado
+### GET - Obtener todos los usuarios
 
-curl -X GET http://localhost:3000/api/typeEmployees
+```bash
+curl -X GET http://localhost:3000/api/users
+```
 
-# Obtener tipo de empleado por id
+### POST - Crear un usuario
 
-curl -X GET http://localhost:3000/api/typeEmployees/1
+```bash
+curl -X POST http://localhost:3000/api/users \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "email": "juan@example.com",
+    "password": "SecurePassword123!",
+    "name": "Juan",
+    "lastName": "Pérez",
+    "status": true,
+    "role": "admin"
+  }'
+```
 
-# Crear tipo de empleado
+### PUT - Actualizar datos del usuario autenticado
 
-curl -X POST http://localhost:3000/api/typeEmployees \
- -H "Content-Type: application/json" \
- -d '{"NombreTipo":"SECRETARIO"}'
+```bash
+curl -X PUT http://localhost:3000/api/users \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "email": "juan.nuevo@example.com",
+    "password": "NewSecurePassword456!",
+    "name": "Juan Carlos",
+    "lastName": "Pérez López",
+    "status": true,
+    "role": "user"
+  }'
+```
 
-# Editar tipo de empleado
+### DELETE - Eliminar usuario autenticado
 
-curl -X PUT http://localhost:3000/api/typeEmployees/4 \
- -H "Content-Type: application/json" \
- -d '{"NombreTipo":"ADMINISTRATIVO"}'
+```bash
+curl -X DELETE http://localhost:3000/api/users \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
 
-# Eliminar tipo de empleado
+---
 
-curl -X DELETE http://localhost:3000/api/typeEmployees/4
+## NOTAS IMPORTANTES
+
+- Todos los endpoints que modifican datos (POST, PUT, DELETE) requieren autenticación con token Bearer
+- El token debe incluirse en el header `Authorization: Bearer YOUR_TOKEN`
+- Las fechas deben estar en formato ISO 8601: `YYYY-MM-DD`
+- Los status de miembros: 1 = Activo, 0 = Inactivo
+- Los roles de usuario: `admin` o `user`
+- Para los endpoints PUT y DELETE de members, asegúrate de incluir el `id` en el body
