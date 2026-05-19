@@ -68,9 +68,9 @@ export const updateMember = async (
     return null;
   }
 
-  // volver a buscar el historial clinico actualizado
+  // volver a buscar el socio actualizado
   const [rows] = await pool.query<MemberRow[]>(
-    "SELECT * FROM HISTORIAL_CLINICO WHERE id = ?",
+    "SELECT * FROM MEMBER WHERE id = ?",
     [id],
   );
 
