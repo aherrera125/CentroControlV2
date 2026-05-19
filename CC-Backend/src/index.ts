@@ -3,6 +3,7 @@ import express from "express";
 //import path from "path";
 import membersRoutes from "./routes/members.routes";
 import usersRoutes from "./routes/users.routes";
+import typeMemberRoutes from "./routes/typeMember.routes";
 //import typeEmployeesRoutes from "./routes/typeEmployees.routes";
 
 // Creamos la aplicación Express
@@ -18,6 +19,7 @@ app.use(express.json());
 // app.use(express.static(path.join(__dirname, "..", "public")));
 
 app.use("/api/users", usersRoutes);
+app.use("/api/typeMember", typeMemberRoutes);
 app.use("/api/members", membersRoutes);
 
 /*app.get("/api/saludo", (_req: Request, res: Response) => {

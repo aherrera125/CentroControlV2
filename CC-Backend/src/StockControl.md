@@ -113,6 +113,45 @@ curl -X DELETE http://localhost:3000/api/users \
 
 ---
 
+## TYPE MEMBER (TIPOS DE SOCIO)
+
+### GET - Obtener todos los tipos de socio
+
+```bash
+curl -X GET http://localhost:3000/api/typeMember
+```
+
+### POST - Crear un tipo de socio
+
+```bash
+curl -X POST http://localhost:3000/api/typeMember \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "name": "Socio Premium"
+  }'
+```
+
+### PUT - Actualizar un tipo de socio
+
+```bash
+curl -X PUT http://localhost:3000/api/typeMember/1 \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "name": "Socio VIP"
+  }'
+```
+
+### DELETE - Eliminar un tipo de socio
+
+```bash
+curl -X DELETE http://localhost:3000/api/typeMember/1 \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+---
+
 ## NOTAS IMPORTANTES
 
 - Todos los endpoints que modifican datos (POST, PUT, DELETE) requieren autenticación con token Bearer
