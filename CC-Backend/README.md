@@ -64,6 +64,58 @@ El backend expone los siguientes endpoints para el recurso `typeMember`:
 - Ruta: `/api/typeMember/:id`
 - Uso: elimina el tipo de socio identificado por `id`.
 
+## Endpoints de pay
+
+El backend expone los siguientes endpoints para el recurso `pay`:
+
+### Obtener pagos
+
+- Método: `GET`
+- Ruta: `/api/pay`
+- Uso: devuelve todos los pagos registrados.
+
+### Agregar un pago
+
+- Método: `POST`
+- Ruta: `/api/pay`
+- Body (JSON):
+
+```json
+{
+  "memberId": 1,
+  "amount": 5000,
+  "description": "Cuota mensual",
+  "payDate": "2024-06-01",
+  "status": "paid"
+}
+```
+
+- Uso: crea un nuevo registro de pago.
+
+### Actualizar un pago
+
+- Método: `PUT`
+- Ruta: `/api/pay/:id`
+- Body (JSON):
+
+```json
+{
+  "memberId": 1,
+  "amount": 5200,
+  "description": "Cuota mensual actualizada",
+  "payDate": "2024-06-01",
+  "status": "paid"
+}
+```
+
+- Uso: actualiza el pago identificado por `id`.
+
+### Eliminar un pago
+
+- Método: `DELETE`
+- Ruta: `/api/pay/:id`
+- Uso: elimina el pago identificado por `id`.
+
 ## Notas
 
 - Los endpoints de creación, actualización y eliminación usan autenticación y permisos.

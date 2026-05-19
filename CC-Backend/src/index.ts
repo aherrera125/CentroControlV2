@@ -4,6 +4,7 @@ import express from "express";
 import membersRoutes from "./routes/members.routes";
 import usersRoutes from "./routes/users.routes";
 import typeMemberRoutes from "./routes/typeMember.routes";
+import payRoutes from "./routes/pay.routes";
 //import typeEmployeesRoutes from "./routes/typeEmployees.routes";
 
 // Creamos la aplicación Express
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use("/api/users", usersRoutes);
 app.use("/api/typeMember", typeMemberRoutes);
 app.use("/api/members", membersRoutes);
+app.use("/api/pay", payRoutes);
 
 /*app.get("/api/saludo", (_req: Request, res: Response) => {
   res.json({ mensaje: "Hola desde la API 🚀" });
