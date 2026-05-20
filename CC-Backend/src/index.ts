@@ -5,7 +5,7 @@ import membersRoutes from "./routes/members.routes";
 import usersRoutes from "./routes/users.routes";
 import typeMemberRoutes from "./routes/typeMember.routes";
 import payRoutes from "./routes/pay.routes";
-//import typeEmployeesRoutes from "./routes/typeEmployees.routes";
+import authRoutes from "./routes/auth.routes";
 
 // Creamos la aplicación Express
 const app = express();
@@ -19,6 +19,10 @@ app.use(express.json());
 // Middleware para servir archivos estáticos
 // app.use(express.static(path.join(__dirname, "..", "public")));
 
+//Endpoint de registro y login
+app.use("/auth", authRoutes);
+
+//Endpoints de la API
 app.use("/api/users", usersRoutes);
 app.use("/api/typeMember", typeMemberRoutes);
 app.use("/api/members", membersRoutes);

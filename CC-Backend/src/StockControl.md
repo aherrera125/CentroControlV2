@@ -1,5 +1,41 @@
 # API ENDPOINTS - Centro Control V2
 
+## AUTH
+
+### POST - Registrar usuario
+
+```bash
+curl -X POST http://localhost:3000/auth/register \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "email": "admin@example.com",
+    "password": "SecurePassword123!",
+    "name": "Admin",
+    "lastName": "Ejemplo",
+    "rolId": 1
+  }'
+```
+
+- `rolId` debe corresponder al id de la tabla `ROLE`.
+- La contraseña se guarda en la base de datos ya encriptada con bcrypt.
+
+### POST - Login
+
+```bash
+curl -X POST http://localhost:3000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@example.com",
+    "password": "SecurePassword123!"
+  }'
+```
+
+- Devuelve información del usuario si las credenciales son correctas.
+- Actualmente no se emite JWT en este endpoint.
+
+---
+
 ## MEMBERS (SOCIOS)
 
 ### GET - Obtener todos los socios
@@ -32,11 +68,10 @@ curl -X POST http://localhost:3000/api/members \
 ### PUT - Actualizar datos de un socio
 
 ```bash
-curl -X PUT http://localhost:3000/api/members \
+curl -X PUT http://localhost:3000/api/members/1 \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
-    "id": 1,
     "typeMemberId": 2,
     "memberNum": 1001,
     "benefitNum": "BEN001",
@@ -54,12 +89,8 @@ curl -X PUT http://localhost:3000/api/members \
 ### DELETE - Eliminar un socio
 
 ```bash
-curl -X DELETE http://localhost:3000/api/members \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -d '{
-    "id": 1
-  }'
+curl -X DELETE http://localhost:3000/api/members/1 \
+  -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
 ---
@@ -201,9 +232,9 @@ curl -X DELETE http://localhost:3000/api/pay/1 \
 
 ## NOTAS IMPORTANTES
 
-- Todos los endpoints que modifican datos (POST, PUT, DELETE) requieren autenticación con token Bearer
-- El token debe incluirse en el header `Authorization: Bearer YOUR_TOKEN`
-- Las fechas deben estar en formato ISO 8601: `YYYY-MM-DD`
-- Los status de miembros: 1 = Activo, 0 = Inactivo
-- Los roles de usuario: `admin` o `user`
-- Para los endpoints PUT y DELETE de members, asegúrate de incluir el `id` en el body
+- Todos los endpoints que modifican datos (POST, PUT, DELETE) requieren autenticación.
+- El token debe incluirse en el header `Authorization: Bearer YOUR_TOKEN`.
+- Las fechas deben estar en formato ISO 8601: `YYYY-MM-DD`.
+- Los roles de usuario son `admin` y `user`.
+- `status` para socios puede ser `1` o `0`.
+- `rolId` en `POST /auth/register` debe existir en la tabla `ROLE`.

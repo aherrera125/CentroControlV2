@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { authenticate } from "../middlewares/auth.middleware";
 import { authPermission } from "../middlewares/authorizePermission.middleware";
 import {
   getUsers,
@@ -10,9 +9,9 @@ import {
 
 const router = Router();
 
-router.get("/", /*authenticate, authPermission("user:read"),*/ getUsers);
-router.post("/", authenticate, authPermission("user:create"), addUser);
-router.put("/", authenticate, authPermission("user:update"), updateUser);
-router.delete("/", authenticate, authPermission("user:delete"), deleteUser);
+router.get("/", /*authPermission("user:read"),*/ getUsers);
+router.post("/", authPermission("user:create"), addUser);
+router.put("/", authPermission("user:update"), updateUser);
+router.delete("/", authPermission("user:delete"), deleteUser);
 
 export default router;

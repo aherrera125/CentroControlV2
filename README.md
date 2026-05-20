@@ -1,73 +1,105 @@
-# React + TypeScript + Vite
+# Centro Control V2
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Un proyecto de gestión de socios, usuarios, tipos de socio y pagos con backend en `Node.js`/`Express` y frontend en `React` + `Vite`.
 
-Currently, two official plugins are available:
+## Estructura del repositorio
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- `CC-Backend/` - backend en TypeScript y MySQL.
+- `CC-Frontend/` - frontend en React + Vite.
 
-## React Compiler
+## Backend
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+### Requisitos
 
-## Expanding the ESLint configuration
+- Node.js 18+ recomendado
+- MySQL
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Instalación
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd CC-Backend
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Ejecutar en desarrollo
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd CC-Backend
+npm run dev
 ```
+
+### Compilar para producción
+
+```bash
+cd CC-Backend
+npm run build
+```
+
+### Documentación de API
+
+La documentación de endpoints del backend está en:
+
+- `CC-Backend/src/StockControl.md`
+
+## Frontend
+
+### Instalación
+
+```bash
+cd CC-Frontend
+npm install
+```
+
+### Ejecutar en desarrollo
+
+```bash
+cd CC-Frontend
+npm run dev
+```
+
+## Endpoints principales
+
+### Autenticación
+
+- `POST /auth/register` - registra un usuario y encripta la contraseña.
+- `POST /auth/login` - valida email y contraseña.
+
+### Socios
+
+- `GET /api/members`
+- `POST /api/members`
+- `PUT /api/members/:id`
+- `DELETE /api/members/:id`
+
+### Usuarios
+
+- `GET /api/users`
+- `POST /api/users`
+- `PUT /api/users`
+- `DELETE /api/users`
+
+### Tipos de socio
+
+- `GET /api/typeMember`
+- `POST /api/typeMember`
+- `PUT /api/typeMember/:id`
+- `DELETE /api/typeMember/:id`
+
+### Pagos
+
+- `GET /api/pay`
+- `POST /api/pay`
+- `PUT /api/pay/:id`
+- `DELETE /api/pay/:id`
+
+## Notas importantes
+
+- El backend guarda passwords encriptadas con `bcrypt`.
+- El login actual solo valida credenciales; no genera JWT.
+- Las rutas de creación, actualización y eliminación están protegidas con permisos.
+- Revisa `CC-Backend/src/StockControl.md` para ejemplos de `curl`.
+
+## Recomendaciones
+
+- Mantén las variables de entorno y credenciales seguras.
+- Verifica que MySQL esté configurado antes de levantar el backend.
