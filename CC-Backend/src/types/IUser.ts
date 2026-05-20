@@ -6,6 +6,5 @@ export interface IUser {
   updated_at?: Date;
   name: string;
   lastName: string;
-  status?: boolean;
-  role: "admin" | "user";
+  status?: boolean;  
 }

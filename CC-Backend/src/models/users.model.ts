@@ -20,7 +20,7 @@ export const findAllUsers = async (): Promise<IUser[]> => {
 };
 
 export const createUser = async (
-  user: Omit<IUser, "id" | "status">,
+  user: Omit<IUser, "id">,
 ): Promise<number> => {
   const [userResult] = await pool.query(
     `INSERT INTO USERS (email, password, name, lastName, status) 
@@ -28,6 +28,31 @@ export const createUser = async (
     [user.email, user.password, user.name, user.lastName, 1],
   );
   return (userResult as any).insertId;
+};
+
+export const createUserRole = async (
+  userId: number,
+  roleId: number | string,
+): Promise<void> => {
+  await pool.query(
+    `INSERT INTO USER_ROLE (userId, roleId) VALUES (?,?)`,
+    [userId, roleId],
+  );
+};
+
+export const findUserByEmail = async (
+  email: string,
+): Promise< (UserRow & { role?: string }) | null> => {
+  const [rows] = await pool.query<UserRow[]>(
+    `SELECT us.*, ro.name as role
+     FROM USERS us
+     LEFT JOIN USER_ROLE ur ON ur.userId = us.id
+     LEFT JOIN ROLE ro ON ro.id = ur.roleId
+     WHERE us.email = ?
+     LIMIT 1`,
+    [email],
+  );
+  return rows.length > 0 ? (rows[0] as any) : null;
 };
 
 export const updateUser = async (
