@@ -7,7 +7,6 @@
 ```bash
 curl -X POST http://localhost:3000/auth/register \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
     "email": "admin@example.com",
     "password": "SecurePassword123!",
@@ -49,7 +48,6 @@ curl -X GET http://localhost:3000/api/members
 ```bash
 curl -X POST http://localhost:3000/api/members \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
     "typeMemberId": 1,
     "memberNum": 1001,
@@ -70,7 +68,6 @@ curl -X POST http://localhost:3000/api/members \
 ```bash
 curl -X PUT http://localhost:3000/api/members/1 \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
     "typeMemberId": 2,
     "memberNum": 1001,
@@ -89,8 +86,7 @@ curl -X PUT http://localhost:3000/api/members/1 \
 ### DELETE - Eliminar un socio
 
 ```bash
-curl -X DELETE http://localhost:3000/api/members/1 \
-  -H "Authorization: Bearer YOUR_TOKEN"
+curl -X DELETE http://localhost:3000/api/members/1
 ```
 
 ---
@@ -108,14 +104,13 @@ curl -X GET http://localhost:3000/api/users
 ```bash
 curl -X POST http://localhost:3000/api/users \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
     "email": "juan@example.com",
     "password": "SecurePassword123!",
     "name": "Juan",
     "lastName": "Pérez",
     "status": true,
-    "role": "admin"
+    "role": "user"
   }'
 ```
 
@@ -124,7 +119,6 @@ curl -X POST http://localhost:3000/api/users \
 ```bash
 curl -X PUT http://localhost:3000/api/users \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
     "email": "juan.nuevo@example.com",
     "password": "NewSecurePassword456!",
@@ -138,8 +132,7 @@ curl -X PUT http://localhost:3000/api/users \
 ### DELETE - Eliminar usuario autenticado
 
 ```bash
-curl -X DELETE http://localhost:3000/api/users \
-  -H "Authorization: Bearer YOUR_TOKEN"
+curl -X DELETE http://localhost:3000/api/users
 ```
 
 ---
@@ -157,7 +150,6 @@ curl -X GET http://localhost:3000/api/typeMember
 ```bash
 curl -X POST http://localhost:3000/api/typeMember \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
     "name": "Socio Premium"
   }'
@@ -168,7 +160,6 @@ curl -X POST http://localhost:3000/api/typeMember \
 ```bash
 curl -X PUT http://localhost:3000/api/typeMember/1 \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
     "name": "Socio VIP"
   }'
@@ -177,8 +168,7 @@ curl -X PUT http://localhost:3000/api/typeMember/1 \
 ### DELETE - Eliminar un tipo de socio
 
 ```bash
-curl -X DELETE http://localhost:3000/api/typeMember/1 \
-  -H "Authorization: Bearer YOUR_TOKEN"
+curl -X DELETE http://localhost:3000/api/typeMember/1
 ```
 
 ---
@@ -196,7 +186,6 @@ curl -X GET http://localhost:3000/api/pay
 ```bash
 curl -X POST http://localhost:3000/api/pay \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
     "memberId": 1,
     "amount": 5000,
@@ -211,7 +200,6 @@ curl -X POST http://localhost:3000/api/pay \
 ```bash
 curl -X PUT http://localhost:3000/api/pay/1 \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
     "memberId": 1,
     "amount": 5200,
@@ -224,16 +212,14 @@ curl -X PUT http://localhost:3000/api/pay/1 \
 ### DELETE - Eliminar un pago
 
 ```bash
-curl -X DELETE http://localhost:3000/api/pay/1 \
-  -H "Authorization: Bearer YOUR_TOKEN"
+curl -X DELETE http://localhost:3000/api/pay/1
 ```
 
 ---
 
 ## NOTAS IMPORTANTES
 
-- Todos los endpoints que modifican datos (POST, PUT, DELETE) requieren autenticación.
-- El token debe incluirse en el header `Authorization: Bearer YOUR_TOKEN`.
+- Todos los endpoints son públicos y no requieren token ni autenticación JWT.
 - Las fechas deben estar en formato ISO 8601: `YYYY-MM-DD`.
 - Los roles de usuario son `admin` y `user`.
 - `status` para socios puede ser `1` o `0`.
