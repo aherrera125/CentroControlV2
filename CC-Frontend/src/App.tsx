@@ -1,17 +1,14 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout";
-import DashboardPage from "./pages/DaschboardPage";
-import OrdersPage from "./pages/OrdersPage";
-import ProductsPage from "./pages/ProductsPag";
+import MainLayout from "./layouts/MainLayout";
+import Home from "./pages/Home";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<DashboardPage />} />
-          <Route path="/orders" element={<OrdersPage />}></Route>
-          <Route path="/products" element={<ProductsPage />}></Route>
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Home />} />
+          {/* Agregar más rutas aquí */}
         </Route>
       </Routes>
     </BrowserRouter>
