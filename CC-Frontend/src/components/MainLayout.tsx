@@ -1,16 +1,8 @@
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import Sidebar from './Sidebar';
 
-const menuItems = [
-  { to: '/', label: 'Socios', icon: 'bi-speedometer2' },
-  { to: '/nuevo-socio', label: 'Socio Nuevo', icon: 'bi-people' },
-  { to: '/tipo-socio', label: 'Tipo de Socio', icon: 'bi-person-plus' },
-  { to: '/pagos', label: 'Pagos', icon: 'bi-person-badge' },
-  { to: '/reporte-pagos', label: 'Reporte de Pagos', icon: 'bi-bar-chart-line' },
-  { to: '/reporte-socios', label: 'Reporte de Socios', icon: 'bi-table' },
-  { to: '/usuarios', label: 'Usuarios', icon: 'bi-ui-checks-grid' },
-  { to: '/alta-usuarios', label: 'Alta de usuarios', icon: 'bi-grid-3x3-gap' },
-];
+
 
 const MainLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -25,39 +17,7 @@ const MainLayout = () => {
   return (
     <div className={`admin-shell ${sidebarOpen ? 'sidebar-open' : ''}`}>
       <div className="sidebar-backdrop" onClick={closeSidebar}></div>
-
-// Sidebar - sacar a un componente
-      <aside className="admin-sidebar" id="adminSidebar" aria-label="Main navigation">
-        <div className="sidebar-header">
-          <a className="brand-mark" href="#" aria-label="Centro de Jubilados dashboard">
-            <span className="brand-icon">
-              <i className="bi bi-grid-1x2-fill" aria-hidden="true"></i>
-            </span>
-            <span className="brand-copy">
-              <span className="brand-title">Centro de Jubilados</span>
-              <span className="brand-subtitle">Sistema de Gestión</span>
-            </span>
-          </a>
-        </div>
-
-        //navbar - sacar en un componente aparte
-        <nav className="sidebar-nav">
-          {menuItems.map(({ to, label, icon }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
-              onClick={closeSidebar}
-            >
-              <span className="nav-icon">
-                <i className={`bi ${icon}`} aria-hidden="true"></i>
-              </span>
-              <span className="nav-text">{label}</span>
-            </NavLink>
-          ))}
-        </nav>
-      </aside>
-
+      <Sidebar></Sidebar>
       <div className="admin-main">
         <nav className="navbar admin-navbar navbar-expand bg-white">
           <div className="container-fluid px-3 px-lg-4">
