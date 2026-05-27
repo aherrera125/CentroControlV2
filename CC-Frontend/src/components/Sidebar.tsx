@@ -1,33 +1,22 @@
-import { NavLink } from "react-router-dom";
+
+import Navbar from "./Navbar";
 
 const Sidebar = () => {
   return (
-    <nav
-      id="sidebarMenu"
-      className="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse"
-    >
-      <div className="position-sticky pt-3 sidebar-sticky">
-        <ul className="nav flex-column">
-          <li className="nav-item">
-            <NavLink to="/" className="nav-link active">
-              Dashboard
-            </NavLink>
-          </li>
-
-          <li className="nav-item">
-            <NavLink to="/orders" className="nav-link">
-              Orders
-            </NavLink>
-          </li>
-
-          <li className="nav-item">
-            <NavLink to="/products" className="nav-link">
-              Products
-            </NavLink>
-          </li>
-        </ul>
+    <aside className="admin-sidebar" id="adminSidebar" aria-label="Main navigation">
+      <div className="sidebar-header">
+        <a className="brand-mark" href="#" aria-label="Centro de Jubilados dashboard">
+          <span className="brand-icon">
+            <i className="bi bi-grid-1x2-fill" aria-hidden="true"></i>
+          </span>
+          <span className="brand-copy">
+            <span className="brand-title">Centro de Jubilados</span>
+            <span className="brand-subtitle">Sistema de Gestión</span>
+          </span>
+        </a>
       </div>
-    </nav>
+      <Navbar></Navbar>
+    </aside>
   );
 };
 

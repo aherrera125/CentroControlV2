@@ -3,26 +3,23 @@ import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import Footer from "./Footer";
+import { useEffect, useState } from "react";
 
 const Layout = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.classList.toggle('sidebar-open', sidebarOpen);
+    return () => document.body.classList.remove('sidebar-open');
+  }, [sidebarOpen]);
+
+  const closeSidebar = () => setSidebarOpen(false);
   return (
-    <>
-      <Navbar />
-
-      <div className="container-fluid">
-        <div className="row">
-          <Sidebar />
-
-          <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <Header />
-
-            <Outlet />
-
-            <Footer />
-          </main>
-        </div>
-      </div>
-    </>
+    <div className={`admin-shell ${sidebarOpen ? 'sidebar-open' : ''}`}>
+      <div className="sidebar-backdrop" onClick={closeSidebar}></div>
+      <Sidebar></Sidebar>
+      <Header></Header>
+    </div>
   );
 };
 
