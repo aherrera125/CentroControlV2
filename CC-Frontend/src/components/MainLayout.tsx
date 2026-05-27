@@ -26,6 +26,7 @@ const MainLayout = () => {
     <div className={`admin-shell ${sidebarOpen ? 'sidebar-open' : ''}`}>
       <div className="sidebar-backdrop" onClick={closeSidebar}></div>
 
+// Sidebar - sacar a un componente
       <aside className="admin-sidebar" id="adminSidebar" aria-label="Main navigation">
         <div className="sidebar-header">
           <a className="brand-mark" href="#" aria-label="Centro de Jubilados dashboard">
@@ -39,6 +40,7 @@ const MainLayout = () => {
           </a>
         </div>
 
+        //navbar - sacar en un componente aparte
         <nav className="sidebar-nav">
           {menuItems.map(({ to, label, icon }) => (
             <NavLink
