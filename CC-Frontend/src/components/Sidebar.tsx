@@ -1,7 +1,10 @@
-
 import Navbar from "./Navbar";
 
-const Sidebar = () => {
+type SidebarProps = {
+  closeSidebar: () => void;
+};
+
+const Sidebar = ({ closeSidebar }: SidebarProps) => {
   return (
     <aside className="admin-sidebar" id="adminSidebar" aria-label="Main navigation">
       <div className="sidebar-header">
@@ -15,7 +18,7 @@ const Sidebar = () => {
           </span>
         </a>
       </div>
-      <Navbar></Navbar>
+      <Navbar onLinkClick={closeSidebar} />
     </aside>
   );
 };

@@ -1,8 +1,7 @@
-import { Outlet } from "react-router-dom";
-import Navbar from "./Navbar";
+//import { Outlet } from "react-router-dom";
+//import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import Footer from "./Footer";
 import { useEffect, useState } from "react";
 
 const Layout = () => {
@@ -17,8 +16,11 @@ const Layout = () => {
   return (
     <div className={`admin-shell ${sidebarOpen ? 'sidebar-open' : ''}`}>
       <div className="sidebar-backdrop" onClick={closeSidebar}></div>
-      <Sidebar></Sidebar>
-      <Header></Header>
+      <Sidebar closeSidebar={closeSidebar} />
+      <Header
+        sidebarOpen={sidebarOpen}
+        onToggleSidebar={() => setSidebarOpen((value) => !value)}
+      />
     </div>
   );
 };
