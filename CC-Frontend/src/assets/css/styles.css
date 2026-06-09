@@ -276,6 +276,12 @@ a {
   border-radius: 999px;
 }
 
+@media (min-width: 992px) {
+  .sidebar-toggle {
+    display: none;
+  }
+}
+
 .search-input {
   max-width: 520px;
   border-color: var(--admin-border);
