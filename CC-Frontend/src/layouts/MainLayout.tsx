@@ -22,6 +22,14 @@ const MainLayout = () => {
 
   const closeSidebar = () => setSidebarOpen(false);
 
+  const handleMenuClick = (label: string) => {
+    closeSidebar();
+
+    if (label === 'Socios') {
+      window.dispatchEvent(new Event('socios:refresh'));
+    }
+  };
+
   return (
     <div className={`admin-shell ${sidebarOpen ? 'sidebar-open' : ''}`}>
       <div className="sidebar-backdrop" onClick={closeSidebar}></div>
@@ -45,7 +53,7 @@ const MainLayout = () => {
               key={to}
               to={to}
               className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
-              onClick={closeSidebar}
+              onClick={() => handleMenuClick(label)}
             >
               <span className="nav-icon">
                 <i className={`bi ${icon}`} aria-hidden="true"></i>
@@ -71,15 +79,6 @@ const MainLayout = () => {
               <span />
               <span />
             </button>
-
-            <form className="d-none d-md-flex ms-3 flex-grow-1" role="search">
-              <input
-                className="form-control search-input"
-                type="search"
-                placeholder="Search users, orders, reports"
-                aria-label="Search"
-              />
-            </form>
 
             <div className="navbar-actions ms-auto">
               <button

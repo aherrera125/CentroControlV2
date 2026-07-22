@@ -6,11 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteMember = exports.updateMember = exports.createMember = exports.findAllMembers = void 0;
 const mysql_1 = __importDefault(require("../database/mysql"));
 const findAllMembers = async () => {
-    const [rows] = await mysql_1.default.query(`SELECT me.memberNum, 
+    const [rows] = await mysql_1.default.query(`SELECT me.id,
+            me.memberNum, 
             me.benefitNum, 
             me.fullName, 
             me.dni, 
             me.phone, 
+            me.status,
             me.address, 
             tm.name typeMember 
     FROM MEMBER me
@@ -40,12 +42,13 @@ const createMember = async (member) => {
 exports.createMember = createMember;
 const updateMember = async (id, member) => {
     const [result] = await mysql_1.default.query(`UPDATE MEMBER
-     SET fullName = ?, benefitNum = ?, dni = ?, phone = ?, salary = ?, address = ?
+     SET fullName = ?, benefitNum = ?, dni = ?, phone = ?, status = ?, salary = ?, address = ?
      WHERE id = ?`, [
         member.fullName,
         member.benefitNum,
         member.dni,
         member.phone,
+        member.status,
         member.salary,
         member.address,
         id,

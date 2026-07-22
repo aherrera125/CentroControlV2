@@ -47,9 +47,7 @@ const register = async (email, password, name, lastName, rolId) => {
         name,
         lastName,
         status: true,
-        role: "user",
     });
-    // asignar rol (asume que rolId es válido)
     await userModel.createUserRole(userId, rolId);
     return userId;
 };

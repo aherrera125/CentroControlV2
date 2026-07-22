@@ -11,7 +11,6 @@ const users_routes_1 = __importDefault(require("./routes/users.routes"));
 const typeMember_routes_1 = __importDefault(require("./routes/typeMember.routes"));
 const pay_routes_1 = __importDefault(require("./routes/pay.routes"));
 const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
-//import typeEmployeesRoutes from "./routes/typeEmployees.routes";
 // Creamos la aplicación Express
 const app = (0, express_1.default)();
 // Definimos el puerto del servidor

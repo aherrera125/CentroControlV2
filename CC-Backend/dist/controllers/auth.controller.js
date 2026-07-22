@@ -58,25 +58,6 @@ const register = async (req, res) => {
     }
 };
 exports.register = register;
-/*export const login = async (req: Request, res: Response) => {
-  try {
-    // Verificar errores de validación
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { email, password } = req.body;
-    const token = await authService.login(email, password);
-
-    return res.json({ token });
-  } catch (error: any) {
-    if (error.message === "Credenciales inválidas") {
-      return res.status(401).json({ error: "Credenciales inválidas" });
-    }
-    return res.status(500).json({ error: "Error al iniciar sesión" });
-  }
-};*/
 const login = async (req, res) => {
     try {
         const errors = (0, express_validator_1.validationResult)(req);

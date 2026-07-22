@@ -6,6 +6,6 @@ const authorizePermission_middleware_1 = require("../middlewares/authorizePermis
 const router = (0, express_1.Router)();
 router.get("/", /*authPermission("member:read"),*/ members_controller_1.getMembers);
 router.post("/", (0, authorizePermission_middleware_1.authPermission)("member:create"), members_controller_1.addMember);
-router.put("/", (0, authorizePermission_middleware_1.authPermission)("member:update"), members_controller_1.updateMember);
+router.put("/:id", members_controller_1.updateMember);
 router.delete("/:id", (0, authorizePermission_middleware_1.authPermission)("member:delete"), members_controller_1.deleteMember);
 exports.default = router;

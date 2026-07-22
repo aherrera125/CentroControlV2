@@ -21,14 +21,9 @@ exports.validateEmail = [
 ];
 exports.registerValidator = [
     ...exports.validateEmail,
-    //...validatePassword,
-    (0, express_validator_1.body)("username")
-        .isLength({ min: 3 })
-        .withMessage("Username debe contener al menos 3 caracteres")
-        .matches(/^[a-zA-Z0-9_]+$/)
-        .withMessage("Username solo puede contener letras, números y guiones bajos"),
+    ...exports.validatePassword,
 ];
 exports.loginValidator = [
     ...exports.validateEmail,
-    (0, express_validator_1.body)("password").notEmpty().withMessage("La contraseña es requerida"),
+    // ...validatePassword,
 ];
