@@ -1,7 +1,6 @@
 import { NavLink } from "react-router-dom";
 
-const menuItems = [
-  { to: '/', label: 'Home', icon: 'bi-house' },
+const menuItems = [  
   { to: '/socios', label: 'Socios', icon: 'bi-people' },
   { to: '/nuevo-socio', label: 'Socio Nuevo', icon: 'bi-person-plus' },
   { to: '/tipo-socio', label: 'Tipo de Socio', icon: 'bi-person-vcard' },
