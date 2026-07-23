@@ -61,9 +61,9 @@ const Header = ({ sidebarOpen, onToggleSidebar }: HeaderProps) => {
               ></i>
             </button>
 
-            <button className="profile-button" type="button" aria-label="Admin Hasan">
+            <button className="profile-button" type="button" aria-label="Alejandro Herrera">
               <span className="profile-avatar avatar-sm">AH</span>
-              <span className="profile-name d-none d-sm-inline">Admin Hasan</span>
+              <span className="profile-name d-none d-sm-inline">Alejandro Herrera</span>
             </button>
           </div>
         </div>

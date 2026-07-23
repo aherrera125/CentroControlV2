@@ -8,14 +8,12 @@ import ReportePagos from "./components/ReportePagos";
 import ReporteSocios from "./components/ReporteSocios";
 import Usuarios from "./components/Usuarios";
 import AltaUsuarios from "./components/AltaUsuarios";
-import Home from "./components/Home";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Home />} /> 
+        <Route element={<Layout />}>          
           <Route path="/socios" element={<Socios />} /> 
           <Route path="/nuevo-socio" element={<SocioNuevo />} />
           <Route path="/tipo-socio" element={<TipoSocio />} />
