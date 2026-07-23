@@ -27,4 +27,4 @@ Thumbs.db
 .DS_Store
 
 # MySQL data
-CC-Backend/mysql_data/
+Backend/mysql_data/
