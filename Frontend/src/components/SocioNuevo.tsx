@@ -123,8 +123,8 @@ const SocioNuevo = () => {
         setSaveSuccess(null);
       }, 3000);
 
-      // Limpiar el formulario después de guardar
-      handleClear();
+      // Limpiar el formulario después de guardar, conservando el aviso de éxito.
+      handleClear(true);
     } catch (err) {
       console.error("Error guardando socio:", err);
       setSaveError((err instanceof Error ? err.message : "No se pudieron guardar los datos."));
@@ -133,7 +133,7 @@ const SocioNuevo = () => {
     }
   };
 
-  const handleClear = () => {
+  const handleClear = (preserveSuccess = false) => {
     setFormData({
       benefitNum: "",
       fullName: "",
@@ -145,7 +145,7 @@ const SocioNuevo = () => {
       address: "",
       typeMemberId: "",
     });
-    setSaveSuccess(null);
+    if (!preserveSuccess) setSaveSuccess(null);
     setSaveError(null);
     setFieldErrors({});
   };
@@ -377,13 +377,6 @@ const SocioNuevo = () => {
 
                 </div>
 
-                {saveSuccess && (
-                  <div className="alert alert-success mt-4 mb-3" role="alert">
-                    <i className="bi bi-check-circle me-2"></i>
-                    {saveSuccess}
-                  </div>
-                )}
-
                 <div className="d-flex gap-2 mt-4">
                   <button
                     type="button"
@@ -406,12 +399,18 @@ const SocioNuevo = () => {
                   <button
                     type="button"
                     className="btn btn-outline-secondary"
-                    onClick={handleClear}
+                    onClick={() => handleClear()}
                     disabled={isSaving}
                   >
                     <i className="bi bi-arrow-clockwise me-2"></i>
                     Limpiar
                   </button>
+                  {saveSuccess && (
+                    <span className="text-success align-self-center" role="status">
+                      <i className="bi bi-check-circle me-2"></i>
+                      {saveSuccess}
+                    </span>
+                  )}
                 </div>
               </form>
             </div>

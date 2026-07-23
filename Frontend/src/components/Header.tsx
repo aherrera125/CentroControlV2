@@ -36,16 +36,7 @@ const Header = ({ sidebarOpen, onToggleSidebar }: HeaderProps) => {
             <span />
             <span />
             <span />
-          </button>
-
-          <form className="d-none d-md-flex ms-3 flex-grow-1" role="search">
-            <input
-              className="form-control search-input"
-              type="search"
-              placeholder="Search users, orders, reports"
-              aria-label="Search"
-            />
-          </form>
+          </button>          
 
           <div className="navbar-actions ms-auto">
             <button
