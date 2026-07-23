@@ -4,8 +4,8 @@ Un proyecto de gestión de socios, usuarios, tipos de socio y pagos con backend 
 
 ## Estructura del repositorio
 
-- `CC-Backend/` - backend en TypeScript y MySQL.
-- `CC-Frontend/` - frontend en React + Vite.
+- `Backend/` - backend en TypeScript y MySQL.
+- `Frontend/` - frontend en React + Vite.
 
 ## Backend
 
@@ -17,21 +17,21 @@ Un proyecto de gestión de socios, usuarios, tipos de socio y pagos con backend 
 ### Instalación
 
 ```bash
-cd CC-Backend
+cd Backend
 npm install
 ```
 
 ### Ejecutar en desarrollo
 
 ```bash
-cd CC-Backend
+cd Backend
 npm run dev
 ```
 
 ### Compilar para producción
 
 ```bash
-cd CC-Backend
+cd Backend
 npm run build
 ```
 
@@ -39,21 +39,21 @@ npm run build
 
 La documentación de endpoints del backend está en:
 
-- `CC-Backend/src/StockControl.md`
+- `Backend/src/StockControl.md`
 
 ## Frontend
 
 ### Instalación
 
 ```bash
-cd CC-Frontend
+cd Frontend
 npm install
 ```
 
 ### Ejecutar en desarrollo
 
 ```bash
-cd CC-Frontend
+cd Frontend
 npm run dev
 ```
 
@@ -97,7 +97,7 @@ npm run dev
 - El backend guarda passwords encriptadas con `bcrypt`.
 - El login actual solo valida credenciales; no genera JWT.
 - Las rutas de creación, actualización y eliminación están protegidas con permisos.
-- Revisa `CC-Backend/src/StockControl.md` para ejemplos de `curl`.
+- Revisa `Backend/src/StockControl.md` para ejemplos de `curl`.
 
 ## Recomendaciones
 

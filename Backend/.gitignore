@@ -1,0 +1,8 @@
+# Docker volumes
+mysql_data/
+Backend/mysql_data/
+
+# Opcional
+node_modules/
+dist/
+.env
