@@ -5,6 +5,32 @@ import { ResultSetHeader } from "mysql2";
 
 export type MemberRow = IMember & RowDataPacket;
 
+/**
+ * Convierte una fecha en formato yyyy-mm-dd a formato MySQL yyyy-mm-dd HH:mm:ss
+ */
+const formatDateToMySQL = (date: string | Date): string => {
+  let dateObj: Date;
+  
+  if (typeof date === "string") {
+    // Si es string en formato yyyy-mm-dd, convertir a Date
+    dateObj = new Date(date + "T00:00:00");
+  } else if (date instanceof Date) {
+    dateObj = date;
+  } else {
+    return new Date().toISOString().slice(0, 19).replace("T", " ");
+  }
+
+  // Convertir a formato yyyy-mm-dd hh:mm:ss
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+  const day = String(dateObj.getDate()).padStart(2, "0");
+  const hours = String(dateObj.getHours()).padStart(2, "0");
+  const minutes = String(dateObj.getMinutes()).padStart(2, "0");
+  const seconds = String(dateObj.getSeconds()).padStart(2, "0");
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
+
 export const findAllMembers = async (): Promise<IMember[]> => {
   const [rows] = await pool.query<MemberRow[]>(
     `SELECT me.id,
@@ -36,10 +62,10 @@ export const createMember = async (
       member.benefitNum,
       member.fullName,
       member.dni,
-      member.dateOfBirth,
+      formatDateToMySQL(member.dateOfBirth),
       member.phone,
       member.status,
-      member.dateAdmission,
+      formatDateToMySQL(member.dateAdmission),
       member.salary,
       member.address,
     ],
