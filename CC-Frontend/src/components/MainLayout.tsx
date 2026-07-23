@@ -1,8 +1,12 @@
-import { Outlet } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import Sidebar from './Sidebar';
 
-
+const menuItems = [
+  { to: '/socios', label: 'Socios', icon: 'bi-people-fill' },
+  { to: '/productos', label: 'Productos', icon: 'bi-box-fill' },
+  { to: '/reportes', label: 'Reportes', icon: 'bi-graph-up' },
+  { to: '/configuracion', label: 'Configuración', icon: 'bi-gear-fill' },
+];
 
 const MainLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -14,10 +18,48 @@ const MainLayout = () => {
 
   const closeSidebar = () => setSidebarOpen(false);
 
+  const handleMenuClick = (label: string) => {
+    closeSidebar();
+
+    if (label === 'Socios') {
+      window.dispatchEvent(new Event('socios:refresh'));
+    }
+  };
+
   return (
     <div className={`admin-shell ${sidebarOpen ? 'sidebar-open' : ''}`}>
       <div className="sidebar-backdrop" onClick={closeSidebar}></div>
-      <Sidebar></Sidebar>
+
+      <aside className="admin-sidebar" id="adminSidebar" aria-label="Main navigation">
+        <div className="sidebar-header">
+          <a className="brand-mark" href="#" aria-label="Centro de Jubilados dashboard">
+            <span className="brand-icon">
+              <i className="bi bi-grid-1x2-fill" aria-hidden="true"></i>
+            </span>
+            <span className="brand-copy">
+              <span className="brand-title">Centro de Jubilados</span>
+              <span className="brand-subtitle">Sistema de Gestión</span>
+            </span>
+          </a>
+        </div>
+
+        <nav className="sidebar-nav">
+          {menuItems.map(({ to, label, icon }) => (
+            <NavLink
+              key={to}
+              to={to}
+              className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+              onClick={() => handleMenuClick(label)}
+            >
+              <span className="nav-icon">
+                <i className={`bi ${icon}`} aria-hidden="true"></i>
+              </span>
+              <span className="nav-text">{label}</span>
+            </NavLink>
+          ))}
+        </nav>
+      </aside>
+
       <div className="admin-main">
         <nav className="navbar admin-navbar navbar-expand bg-white">
           <div className="container-fluid px-3 px-lg-4">
@@ -33,15 +75,6 @@ const MainLayout = () => {
               <span />
               <span />
             </button>
-
-            <form className="d-none d-md-flex ms-3 flex-grow-1" role="search">
-              <input
-                className="form-control search-input"
-                type="search"
-                placeholder="Search users, orders, reports"
-                aria-label="Search"
-              />
-            </form>
 
             <div className="navbar-actions ms-auto">
               <button

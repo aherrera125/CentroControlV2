@@ -7,11 +7,13 @@ export type MemberRow = IMember & RowDataPacket;
 
 export const findAllMembers = async (): Promise<IMember[]> => {
   const [rows] = await pool.query<MemberRow[]>(
-    `SELECT me.memberNum, 
+    `SELECT me.id,
+            me.memberNum, 
             me.benefitNum, 
             me.fullName, 
             me.dni, 
             me.phone, 
+            me.status,
             me.address, 
             tm.name typeMember 
     FROM MEMBER me
@@ -51,13 +53,14 @@ export const updateMember = async (
 ): Promise<IMember | null> => {
   const [result] = await pool.query<ResultSetHeader>(
     `UPDATE MEMBER
-     SET fullName = ?, benefitNum = ?, dni = ?, phone = ?, salary = ?, address = ?
+     SET fullName = ?, benefitNum = ?, dni = ?, phone = ?, status = ?, salary = ?, address = ?
      WHERE id = ?`,
     [
       member.fullName,
       member.benefitNum,
       member.dni,
       member.phone,
+      member.status,
       member.salary,
       member.address,
       id,

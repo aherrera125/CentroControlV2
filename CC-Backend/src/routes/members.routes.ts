@@ -11,7 +11,7 @@ const router = Router();
 
 router.get("/", /*authPermission("member:read"),*/ getMembers);
 router.post("/", authPermission("member:create"), addMember);
-router.put("/", authPermission("member:update"), updateMember);
+router.put("/:id", updateMember);
 router.delete("/:id", authPermission("member:delete"), deleteMember);
 
 export default router;
