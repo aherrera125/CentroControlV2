@@ -1,31 +1,38 @@
-const Navbar = () => {
+import { NavLink } from "react-router-dom";
+
+const menuItems = [
+  { to: '/', label: 'Home', icon: 'bi-house' },
+  { to: '/socios', label: 'Socios', icon: 'bi-people' },
+  { to: '/nuevo-socio', label: 'Socio Nuevo', icon: 'bi-person-plus' },
+  { to: '/tipo-socio', label: 'Tipo de Socio', icon: 'bi-person-vcard' },
+  { to: '/pagos', label: 'Pagos', icon: 'bi-currency-dollar' },
+  { to: '/reporte-pagos', label: 'Reporte de Pagos', icon: 'bi-bar-chart-line' },
+  { to: '/reporte-socios', label: 'Reporte de Socios', icon: 'bi-bar-chart-line' },
+  { to: '/usuarios', label: 'Usuarios', icon: 'bi-person' },
+  { to: '/alta-usuarios', label: 'Alta de usuarios', icon: 'bi-person-plus' },
+];
+
+type NavbarProps = {
+  onLinkClick?: () => void;
+};
+
+const Navbar = ({ onLinkClick }: NavbarProps) => {
   return (
-    <header className="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-      <a className="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">
-        Company name
-      </a>
-
-      <ul className="navbar-nav flex-row d-md-none">
-        <li className="nav-item text-nowrap">
-          <button
-            className="nav-link px-3 text-white"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#sidebarMenu"
-          >
-            ☰
-          </button>
-        </li>
-      </ul>
-
-      <div className="navbar-nav">
-        <div className="nav-item text-nowrap">
-          <a className="nav-link px-3" href="#">
-            Sign out
-          </a>
-        </div>
-      </div>
-    </header>
+    <nav className="sidebar-nav">
+      {menuItems.map(({ to, label, icon }) => (
+        <NavLink
+          key={to}
+          to={to}
+          className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+          onClick={onLinkClick}
+        >
+          <span className="nav-icon">
+            <i className={`bi ${icon}`} aria-hidden="true"></i>
+          </span>
+          <span className="nav-text">{label}</span>
+        </NavLink>
+      ))}
+    </nav>
   );
 };
 
