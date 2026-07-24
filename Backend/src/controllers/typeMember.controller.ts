@@ -12,9 +12,15 @@ export const getTypeMember = async (_req: Request, res: Response) => {
   }
 };
 
-export const addTypeMember = (req: Request, res: Response) => {
-  const data = typeMemberService.addTypeMember(req.body);
-  res.status(201).json(data);
+export const addTypeMember = async (req: Request, res: Response) => {
+  try {
+    const typeMemberData: ITypeMember = req.body;
+    const id = await typeMemberService.addTypeMember(typeMemberData);
+    return res.status(201).json({ id, name: typeMemberData.name });
+  } catch (error) {
+    console.error("Error al crear el tipo de socio:", error);
+    return res.status(500).json({ message: "Error al guardar el tipo de socio." });
+  }
 };
 
 export const updateTypeMember = async (req: Request, res: Response) => {
