@@ -11,9 +11,19 @@ type Member = {
   address?: string;
   salary?: number;
   typeMember?: string;
+  typeMemberId?: number;
+  dateOfBirth?: string;
+  dateAdmission?: string;
+};
+
+type TypeMember = {
+  id: number;
+  name: string;
 };
 
 const pageSizeOptions = [10, 20, 50, 100];
+
+const toDateInputValue = (value: unknown) => String(value ?? "").slice(0, 10);
 
 const Socios = () => {
   const [members, setMembers] = useState<Member[]>([]);
@@ -27,6 +37,9 @@ const Socios = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
+  const [typeMembers, setTypeMembers] = useState<TypeMember[]>([]);
+  const [isLoadingTypes, setIsLoadingTypes] = useState(true);
+  const [typesError, setTypesError] = useState<string | null>(null);
 
   const loadMembers = async () => {
     setIsLoading(true);
@@ -56,6 +69,9 @@ const Socios = () => {
         address: String(member.address ?? ""),
         salary: Number(member.salary ?? 0),
         typeMember: String(member.typeMember ?? ""),
+        typeMemberId: Number(member.typeMemberId ?? 0),
+        dateOfBirth: toDateInputValue(member.dateOfBirth),
+        dateAdmission: toDateInputValue(member.dateAdmission),
       }));
 
       setMembers(normalizedMembers);
@@ -68,8 +84,33 @@ const Socios = () => {
     }
   };
 
+  const loadTypeMembers = async () => {
+    setIsLoadingTypes(true);
+    setTypesError(null);
+
+    try {
+      const response = await fetch("/api/typeMember");
+      if (!response.ok) throw new Error("No se pudieron cargar los tipos de socio.");
+
+      const payload: unknown = await response.json();
+      const data = Array.isArray(payload)
+        ? payload
+        : Array.isArray((payload as { data?: unknown }).data)
+          ? (payload as { data: TypeMember[] }).data
+          : [];
+      setTypeMembers(data.map((type) => ({ id: Number(type.id), name: String(type.name) })));
+    } catch (err) {
+      console.error("Error al cargar tipos de socio:", err);
+      setTypeMembers([]);
+      setTypesError("No fue posible cargar los tipos de socio.");
+    } finally {
+      setIsLoadingTypes(false);
+    }
+  };
+
   useEffect(() => {
     void loadMembers();
+    void loadTypeMembers();
 
     const handleRefresh = () => {
       void loadMembers();
@@ -125,6 +166,8 @@ const Socios = () => {
       benefitNum: member.benefitNum,
       phone: member.phone,
       status: member.status,
+      typeMemberId: member.typeMemberId,
+      dateOfBirth: member.dateOfBirth,
     });
   };
 
@@ -135,11 +178,11 @@ const Socios = () => {
     setSaveSuccess(null);
   };
 
-  const handleEditedMemberChange = (field: keyof Pick<Member, "fullName" | "dni" | "benefitNum" | "phone" | "status">, value: string) => {
+  const handleEditedMemberChange = (field: keyof Pick<Member, "fullName" | "dni" | "benefitNum" | "phone" | "status" | "typeMemberId" | "dateOfBirth">, value: string) => {
     if (!editedMember) return;
     setEditedMember((current) => ({
       ...current,
-      [field]: field === "status" ? Number(value) : value,
+      [field]: field === "status" || field === "typeMemberId" ? Number(value) : value,
     }));
   };
 
@@ -157,6 +200,8 @@ const Socios = () => {
         dni: editedMember.dni ?? selectedMember.dni,
         phone: editedMember.phone ?? selectedMember.phone,
         status: editedMember.status ?? selectedMember.status,
+        typeMemberId: editedMember.typeMemberId ?? selectedMember.typeMemberId,
+        dateOfBirth: editedMember.dateOfBirth ?? selectedMember.dateOfBirth,
         salary: selectedMember.salary ?? 0,
         address: selectedMember.address ?? "",
       };
@@ -174,6 +219,7 @@ const Socios = () => {
         throw new Error(errPayload.message ?? "No se pudo guardar el socio.");
       }
 
+      const updatedTypeMemberId = editedMember.typeMemberId ?? selectedMember.typeMemberId;
       const updatedMember: Member = {
         ...selectedMember,
         fullName: editedMember.fullName ?? selectedMember.fullName,
@@ -181,6 +227,9 @@ const Socios = () => {
         dni: editedMember.dni ?? selectedMember.dni,
         phone: editedMember.phone ?? selectedMember.phone,
         status: editedMember.status ?? selectedMember.status,
+        typeMemberId: updatedTypeMemberId,
+        typeMember: typeMembers.find((type) => type.id === updatedTypeMemberId)?.name ?? selectedMember.typeMember,
+        dateOfBirth: editedMember.dateOfBirth ?? selectedMember.dateOfBirth,
       } as Member;
 
       setSelectedMember(updatedMember);
@@ -190,6 +239,8 @@ const Socios = () => {
         benefitNum: updatedMember.benefitNum,
         phone: updatedMember.phone,
         status: updatedMember.status,
+        typeMemberId: updatedMember.typeMemberId,
+        dateOfBirth: updatedMember.dateOfBirth,
       });
       setMembers((current) =>
         current.map((item) => (item.id === updatedMember.id ? updatedMember : item)),
@@ -478,12 +529,30 @@ const Socios = () => {
                                 </div>
                                 <div className="col-12 col-md-6">
                                   <label className="form-label">Tipo de socio</label>
+                                  <select
+                                    className="form-select"
+                                    value={String(editedMember.typeMemberId ?? "")}
+                                    onChange={(event) => handleEditedMemberChange("typeMemberId", event.target.value)}
+                                    disabled={isLoadingTypes}
+                                  >
+                                    <option value="">Seleccionar tipo de socio</option>
+                                    {typeMembers.map((type) => (
+                                      <option key={type.id} value={type.id}>{type.name}</option>
+                                    ))}
+                                  </select>
+                                </div>
+                                <div className="col-12 col-md-6">
+                                  <label className="form-label">Fecha de nacimiento</label>
                                   <input
-                                    type="text"
+                                    type="date"
                                     className="form-control"
-                                    value={selectedMember.typeMember ?? ""}
-                                    readOnly
+                                    value={editedMember.dateOfBirth ?? ""}
+                                    onChange={(event) => handleEditedMemberChange("dateOfBirth", event.target.value)}
                                   />
+                                </div>
+                                <div className="col-12 col-md-6">
+                                  <label className="form-label">Fecha de ingreso</label>
+                                  <input type="date" className="form-control" value={selectedMember.dateAdmission ?? ""} readOnly />
                                 </div>
                                 <div className="col-12 col-md-6">
                                   <label className="form-label">Dirección</label>
@@ -495,6 +564,9 @@ const Socios = () => {
                                   />
                                 </div>
                               </div>
+                              {typesError && (
+                                <div className="alert alert-warning mt-3" role="alert">{typesError}</div>
+                              )}
                               {saveError && (
                                 <div className="alert alert-danger mt-3" role="alert">
                                   {saveError}

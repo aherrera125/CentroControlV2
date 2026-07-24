@@ -34,12 +34,15 @@ const formatDateToMySQL = (date: string | Date): string => {
 export const findAllMembers = async (): Promise<IMember[]> => {
   const [rows] = await pool.query<MemberRow[]>(
     `SELECT me.id,
+            me.typeMemberId,
             me.memberNum, 
             me.benefitNum, 
             me.fullName, 
             me.dni, 
             me.phone, 
             me.status,
+            me.dateOfBirth,
+            me.dateAdmission,
             me.address, 
             tm.name typeMember 
     FROM MEMBER me
@@ -79,12 +82,14 @@ export const updateMember = async (
 ): Promise<IMember | null> => {
   const [result] = await pool.query<ResultSetHeader>(
     `UPDATE MEMBER
-     SET fullName = ?, benefitNum = ?, dni = ?, phone = ?, status = ?, salary = ?, address = ?
+     SET typeMemberId = ?, fullName = ?, benefitNum = ?, dni = ?, dateOfBirth = ?, phone = ?, status = ?, salary = ?, address = ?
      WHERE id = ?`,
     [
+      member.typeMemberId,
       member.fullName,
       member.benefitNum,
       member.dni,
+      formatDateToMySQL(member.dateOfBirth),
       member.phone,
       member.status,
       member.salary,
