@@ -16,7 +16,7 @@ export const createPay = async (
 ): Promise<number> => {
   const [result] = await pool.query(
     `INSERT INTO PAY (memberId, amount, payDate, dueDate, status, monthPaid, voucherNum, note) VALUES (?,?,?,?,?,?,?,?)`,
-    [pay.memberId, pay.amount, pay.payDate, pay.dueDate, pay.status, pay.monthPaid, pay.voucherNumber, pay.note],
+    [pay.memberId, pay.amount, pay.payDate, pay.dueDate, 1, pay.monthPaid, pay.voucherNumber, pay.note],
   );
   return (result as any).insertId;
 };

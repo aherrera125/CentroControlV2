@@ -157,10 +157,6 @@ const TipoSocio = () => {
         <div className="col-12">
           <div className="card shadow-sm border-0 members-panel">
             <div className="card-body">
-              <div className="mb-4">
-                <h2 className="h4 mb-0">Tipo de socio</h2>
-              </div>
-
               <div className="row g-4">
                 <div className="col-12 col-lg-7">
                   <div className="border rounded-3 h-100 p-3">

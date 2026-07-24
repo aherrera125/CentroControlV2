@@ -231,20 +231,6 @@ const Socios = () => {
         <div className="col-12">
           <div className="card shadow-sm border-0 members-panel">
             <div className="card-body">
-              <div className="d-flex flex-column flex-lg-row justify-content-between align-items-start gap-3 mb-4">
-                <div>
-                  <h2 className="h4 mb-0">Listado de socios</h2>
-                </div>
-                <button
-                  type="button"
-                  className="btn btn-outline-primary btn-sm"
-                  onClick={() => void loadMembers()}
-                >
-                  <i className="bi bi-arrow-clockwise me-2" aria-hidden="true"></i>
-                  Recargar
-                </button>
-              </div>
-
               <div className="row g-2 align-items-end mb-4">
                 <div className="col-lg-6">
                   <label className="form-label visually-hidden" htmlFor="member-search">
@@ -276,10 +262,21 @@ const Socios = () => {
                     ))}
                   </select>
                 </div>
-                <div className="col-sm-6 col-lg-3 text-sm-end">
-                  <p className="mb-0 text-muted">
-                    {filteredMembers.length} resultados
-                  </p>
+                <div className="col-sm-6 col-lg-3">
+                  <div className="d-flex justify-content-sm-end align-items-center gap-2">
+                    <p className="mb-0 text-muted">
+                      {filteredMembers.length} resultados
+                    </p>
+                    <button
+                      type="button"
+                      className="btn btn-outline-primary btn-sm"
+                      onClick={() => void loadMembers()}
+                      disabled={isLoading}
+                    >
+                      <i className="bi bi-arrow-clockwise me-2" aria-hidden="true"></i>
+                      Recargar
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -334,8 +331,8 @@ const Socios = () => {
                                 <div className="d-flex flex-wrap align-items-center gap-2">
                                   <span
                                     className={`badge rounded-pill ${isActive
-                                        ? "bg-success-subtle text-success-emphasis"
-                                        : "bg-secondary-subtle text-secondary-emphasis"
+                                      ? "bg-success-subtle text-success-emphasis"
+                                      : "bg-secondary-subtle text-secondary-emphasis"
                                       }`}
                                   >
                                     {isActive ? "Activo" : "Inactivo"}
