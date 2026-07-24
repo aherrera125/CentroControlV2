@@ -166,6 +166,12 @@ const SocioNuevo = () => {
                 </div>
               )}
 
+              {saveError && (
+                <div className="alert alert-danger mb-3" role="alert">
+                  {saveError}
+                </div>
+              )}
+
               <form noValidate>
                 <div className="row gy-4">
                   <div className="col-12">
