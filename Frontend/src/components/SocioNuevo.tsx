@@ -156,9 +156,6 @@ const SocioNuevo = () => {
         <div className="col-12">
           <div className="card shadow-sm border-0 members-panel">
             <div className="card-body">
-              <div className="mb-4">
-                <h2 className="h4 mb-0">Socio Nuevo</h2>
-              </div>
 
               {typesError && (
                 <div className="alert alert-warning mb-3" role="alert">
