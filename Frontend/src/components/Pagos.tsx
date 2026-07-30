@@ -396,8 +396,7 @@ const Pagos = () => {
                         <table className="table table-hover align-middle mb-0">
                           <thead className="table-light">
                             <tr>
-                              <th>Fecha</th>
-                              <th>Mes</th>
+                              <th>Fecha</th>                              
                               <th>Importe</th>
                               <th className="text-end">Acciones</th>
                             </tr>
@@ -405,8 +404,7 @@ const Pagos = () => {
                           <tbody>
                             {selectedMemberPayments.map((payment) => (
                               <tr key={payment.id}>
-                                <td>{formatDate(payment.payDate)}</td>
-                                <td>{payment.monthPaid}</td>
+                                <td>{formatDate(payment.payDate)}</td>                                
                                 <td>${payment.amount.toLocaleString("es-AR", { minimumFractionDigits: 2 })}</td>
                                 <td className="text-end">
                                   <button
