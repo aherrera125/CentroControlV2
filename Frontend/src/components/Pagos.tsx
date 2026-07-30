@@ -47,8 +47,10 @@ const Pagos = () => {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [memberForPayment, setMemberForPayment] = useState<Member | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [page, setPage] = useState(1);
+    const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [paymentPage, setPaymentPage] = useState(1);
+  const [paymentPageSize, setPaymentPageSize] = useState(10);
   const [paymentForm, setPaymentForm] = useState<PaymentForm>(emptyPaymentForm);
   const [fieldErrors, setFieldErrors] = useState<Record<keyof PaymentForm, boolean>>({
     amount: false,
@@ -140,9 +142,13 @@ const Pagos = () => {
     void loadPayments();
   }, []);
 
-  useEffect(() => {
+    useEffect(() => {
     setPage(1);
   }, [searchTerm, pageSize]);
+
+  useEffect(() => {
+    setPaymentPage(1);
+  }, [selectedMember, paymentPageSize]);
 
   const filteredMembers = members.filter((member) => {
     const term = searchTerm.trim().toLowerCase();
@@ -155,22 +161,22 @@ const Pagos = () => {
     if (page > pageCount) setPage(pageCount);
   }, [page, pageCount]);
 
-  const getPaginationItems = (): (number | "ellipsis")[] => {
-    if (pageCount <= 10) return Array.from({ length: pageCount }, (_, index) => index + 1);
+  const getPaginationItems = (currentPage: number, totalPages: number): (number | "ellipsis")[] => {
+    if (totalPages <= 10) return Array.from({ length: totalPages }, (_, index) => index + 1);
 
     const firstPages = [1, 2, 3, 4];
-    const lastPages = [pageCount - 3, pageCount - 2, pageCount - 1, pageCount];
+    const lastPages = [totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
 
-    if (page <= 4 || page >= pageCount - 3) return [...firstPages, "ellipsis", ...lastPages];
+    if (currentPage <= 4 || currentPage >= totalPages - 3) return [...firstPages, "ellipsis", ...lastPages];
 
-    const windowStart = Math.max(5, page - 1);
-    const windowEnd = Math.min(pageCount - 4, page + 2);
+    const windowStart = Math.max(5, currentPage - 1);
+    const windowEnd = Math.min(totalPages - 4, currentPage + 2);
     const windowPages = Array.from({ length: windowEnd - windowStart + 1 }, (_, index) => windowStart + index);
     return [...firstPages, "ellipsis", ...windowPages, "ellipsis", ...lastPages];
   };
 
   const paginatedMembers = filteredMembers.slice((page - 1) * pageSize, page * pageSize);
-  const paginationItems = getPaginationItems();
+  const paginationItems = getPaginationItems(page, pageCount);
 
   const selectedMemberPayments = useMemo(
     () =>
@@ -179,6 +185,19 @@ const Pagos = () => {
         .sort((first, second) => new Date(second.payDate).getTime() - new Date(first.payDate).getTime()),
     [payments, selectedMember],
   );
+
+  const paymentPageCount = Math.max(1, Math.ceil(selectedMemberPayments.length / paymentPageSize));
+
+  useEffect(() => {
+    if (paymentPage > paymentPageCount) setPaymentPage(paymentPageCount);
+  }, [paymentPage, paymentPageCount]);
+
+  const paginatedPayments = useMemo(() => {
+    const start = (paymentPage - 1) * paymentPageSize;
+    return selectedMemberPayments.slice(start, start + paymentPageSize);
+  }, [selectedMemberPayments, paymentPage, paymentPageSize]);
+
+  const paymentPaginationItems = getPaginationItems(paymentPage, paymentPageCount);
 
   const handleSelectMember = (member: Member) => {
     setSelectedMember(member);
@@ -380,46 +399,86 @@ const Pagos = () => {
                   </div>
                 </div>
 
-                <div className="col-12 col-lg-5">
-                  <div className="border rounded-3 h-100 p-3">
-                    <h3 className="h6 mb-3">Historial de pagos</h3>
-                    {!selectedMember ? (
-                      <p className="text-muted text-center py-5 mb-0">Seleccione un socio para ver su historial de pagos.</p>
-                    ) : isLoadingPayments ? (
-                      <div className="text-center py-5"><div className="spinner-border text-primary" role="status"><span className="visually-hidden">Cargando historial...</span></div></div>
-                    ) : paymentsError ? (
-                      <div className="alert alert-warning mb-0" role="alert">{paymentsError}</div>
-                    ) : selectedMemberPayments.length === 0 ? (
-                      <p className="text-muted text-center py-5 mb-0">{selectedMember.fullName} no registra pagos.</p>
-                    ) : (
-                      <div className="table-responsive">
-                        <table className="table table-hover align-middle mb-0">
-                          <thead className="table-light">
-                            <tr>
-                              <th>Fecha</th>                              
-                              <th>Importe</th>
-                              <th className="text-end">Acciones</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {selectedMemberPayments.map((payment) => (
-                              <tr key={payment.id}>
-                                <td>{formatDate(payment.payDate)}</td>                                
-                                <td>${payment.amount.toLocaleString("es-AR", { minimumFractionDigits: 2 })}</td>
-                                <td className="text-end">
-                                  <button
-                                    type="button"
-                                    className="btn btn-link btn-sm p-0 text-decoration-none"
-                                    onClick={() => void fetchPaymentDetail(payment.id)}
-                                    disabled={isLoadingDetail}
-                                  >
-                                    Detalle
-                                  </button>
-                                </td>
+                                <div className="col-12 col-lg-5">
+                  <div className="border rounded-3 h-100 p-3 d-flex flex-column">
+                    <div className="flex-grow-1">
+                      <div className="d-flex justify-content-between align-items-center mb-3">
+                        <h3 className="h6 mb-0">Historial de pagos</h3>
+                        {selectedMember && <p className="mb-0 text-muted small">{selectedMemberPayments.length} registros</p>}
+                      </div>
+
+                      {selectedMember && (
+                        <div className="row g-2 align-items-end mb-3">
+                          <div className="col-12">
+                            <label className="form-label visually-hidden" htmlFor="payment-history-page-size">Registros por página</label>
+                            <select id="payment-history-page-size" className="form-select form-select-sm" value={paymentPageSize} onChange={(event) => setPaymentPageSize(Number(event.target.value))}>
+                              {pageSizeOptions.map((size) => <option key={size} value={size}>Mostrar {size}</option>)}
+                            </select>
+                          </div>
+                        </div>
+                      )}
+
+                      {!selectedMember ? (
+                        <p className="text-muted text-center py-5 mb-0">Seleccione un socio para ver su historial de pagos.</p>
+                      ) : isLoadingPayments ? (
+                        <div className="text-center py-5"><div className="spinner-border text-primary" role="status"><span className="visually-hidden">Cargando historial...</span></div></div>
+                      ) : paymentsError ? (
+                        <div className="alert alert-warning mb-0" role="alert">{paymentsError}</div>
+                      ) : selectedMemberPayments.length === 0 ? (
+                        <p className="text-muted text-center py-5 mb-0">{selectedMember.fullName} no registra pagos.</p>
+                      ) : (
+                        <div className="table-responsive">
+                          <table className="table table-hover align-middle mb-0">
+                            <thead className="table-light">
+                              <tr>
+                                <th>Fecha</th>                              
+                                <th>Importe</th>
+                                <th className="text-end">Acciones</th>
                               </tr>
+                            </thead>
+                            <tbody>
+                              {paginatedPayments.map((payment) => (
+                                <tr key={payment.id}>
+                                  <td>{formatDate(payment.payDate)}</td>                                
+                                  <td>${payment.amount.toLocaleString("es-AR", { minimumFractionDigits: 2 })}</td>
+                                  <td className="text-end">
+                                    <button
+                                      type="button"
+                                      className="btn btn-link btn-sm p-0 text-decoration-none"
+                                      onClick={() => void fetchPaymentDetail(payment.id)}
+                                      disabled={isLoadingDetail}
+                                    >
+                                      Detalle
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+
+                    {selectedMember && !isLoadingPayments && !paymentsError && selectedMemberPayments.length > 0 && (
+                      <div className="d-flex flex-column align-items-center gap-2 mt-4 pt-3 border-top">
+                        <div className="text-muted small">
+                          Página <strong>{paymentPage}</strong> de {paymentPageCount}
+                        </div>
+                        <nav aria-label="Paginación de historial de pagos">
+                          <ul className="pagination pagination-sm mb-0">
+                            <li className={`page-item ${paymentPage === 1 ? "disabled" : ""}`}>
+                              <button type="button" className="page-link" onClick={() => setPaymentPage((current) => Math.max(1, current - 1))} disabled={paymentPage === 1}>Ant.</button>
+                            </li>
+                            {paymentPaginationItems.map((item, index) => item === "ellipsis" ? (
+                              <li key={`pay-ellipsis-${index}`} className="page-item disabled"><span className="page-link">…</span></li>
+                            ) : (
+                              <li key={`pay-page-${item}`} className={`page-item ${item === paymentPage ? "active" : ""}`}><button type="button" className="page-link" onClick={() => setPaymentPage(item)}>{item}</button></li>
                             ))}
-                          </tbody>
-                        </table>
+                            <li className={`page-item ${paymentPage === paymentPageCount ? "disabled" : ""}`}>
+                              <button type="button" className="page-link" onClick={() => setPaymentPage((current) => Math.min(paymentPageCount, current + 1))} disabled={paymentPage === paymentPageCount}>Sig.</button>
+                            </li>
+                          </ul>
+                        </nav>
                       </div>
                     )}
                   </div>

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import {
-  getPay,
+  getPay,  
   addPay,
   updatePay,
   deletePay,

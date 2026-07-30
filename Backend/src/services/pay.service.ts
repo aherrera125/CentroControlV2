@@ -1,5 +1,5 @@
 import {
-  findAllPay,
+  findAllPay,  
   createPay,
   updatePay,
   deletePay,
