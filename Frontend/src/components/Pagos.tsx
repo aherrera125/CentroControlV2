@@ -63,6 +63,8 @@ const Pagos = () => {
   const [paymentsError, setPaymentsError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
+  const [selectedPaymentDetail, setSelectedPaymentDetail] = useState<Payment | null>(null);
+  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
 
   const loadMembers = async () => {
     setIsLoadingMembers(true);
@@ -260,6 +262,38 @@ const Pagos = () => {
     }
   };
 
+  const fetchPaymentDetail = async (paymentId: number) => {
+    setIsLoadingDetail(true);
+    try {
+      const response = await fetch(`/api/pay/${paymentId}`);
+      if (!response.ok) {
+        const localPayment = payments.find((p) => p.id === paymentId);
+        if (localPayment) {
+          setSelectedPaymentDetail(localPayment);
+          return;
+        }
+        throw new Error("No se pudo cargar el detalle del pago.");
+      }
+      const payload: any = await response.json();
+      const paymentData = payload.data || payload;
+      setSelectedPaymentDetail({
+        id: Number(paymentData.id ?? paymentData.payId ?? 0),
+        memberId: Number(paymentData.memberId ?? 0),
+        amount: Number(paymentData.amount ?? 0),
+        payDate: String(paymentData.payDate ?? ""),
+        monthPaid: String(paymentData.monthPaid ?? ""),
+        voucherNumber: String(paymentData.voucherNumber ?? paymentData.voucherNum ?? ""),
+        note: String(paymentData.note ?? ""),
+      });
+    } catch (error) {
+      console.error("Error al cargar detalle:", error);
+      const localPayment = payments.find((p) => p.id === paymentId);
+      if (localPayment) setSelectedPaymentDetail(localPayment);
+    } finally {
+      setIsLoadingDetail(false);
+    }
+  };
+
   return (
     <div className="container-fluid p-0">
       <div className="row g-4">
@@ -267,60 +301,67 @@ const Pagos = () => {
           <div className="card shadow-sm border-0 members-panel">
             <div className="card-body">
               <div className="row g-4">
+
+
                 <div className="col-12 col-lg-7">
-                  <div className="border rounded-3 h-100 p-3">
-                    <div className="d-flex justify-content-between align-items-center gap-3 mb-3">
-                      <h3 className="h6 mb-0">Socios activos</h3>
-                      <button type="button" className="btn btn-outline-primary btn-sm" onClick={() => void loadMembers()} disabled={isLoadingMembers}>
-                        <i className="bi bi-arrow-clockwise me-2" aria-hidden="true" />Recargar
-                      </button>
+                  <div className="border rounded-3 h-100 p-3 d-flex flex-column">
+                    <div className="flex-grow-1">
+                      <div className="d-flex justify-content-between align-items-center gap-3 mb-3">
+                        <h3 className="h6 mb-0">Socios activos</h3>
+                        <button type="button" className="btn btn-outline-primary btn-sm" onClick={() => void loadMembers()} disabled={isLoadingMembers}>
+                          <i className="bi bi-arrow-clockwise me-2" aria-hidden="true" />Recargar
+                        </button>
+                      </div>
+
+                      <div className="row g-2 align-items-end mb-3">
+                        <div className="col-12 col-md-6">
+                          <label className="form-label visually-hidden" htmlFor="payment-member-search">Buscar socios</label>
+                          <input id="payment-member-search" type="search" className="form-control" placeholder="Buscar por nombre o beneficio" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} />
+                        </div>
+                        <div className="col-7 col-md-4">
+                          <label className="form-label visually-hidden" htmlFor="payment-page-size">Registros por página</label>
+                          <select id="payment-page-size" className="form-select" value={pageSize} onChange={(event) => setPageSize(Number(event.target.value))}>
+                            {pageSizeOptions.map((size) => <option key={size} value={size}>Mostrar {size}</option>)}
+                          </select>
+                        </div>
+                        <div className="col-5 col-md-2 text-end"><p className="mb-0 text-muted">{filteredMembers.length}</p></div>
+                      </div>
+
+                      {isLoadingMembers ? (
+                        <div className="text-center py-5"><div className="spinner-border text-primary" role="status"><span className="visually-hidden">Cargando socios...</span></div></div>
+                      ) : membersError ? (
+                        <div className="alert alert-warning mb-0" role="alert">{membersError}</div>
+                      ) : filteredMembers.length === 0 ? (
+                        <p className="text-muted text-center py-5 mb-0">{members.length === 0 ? "No hay socios activos registrados." : `No se encontraron socios para "${searchTerm}".`}</p>
+                      ) : (
+                        <div className="table-responsive">
+                          <table className="table table-hover align-middle mb-0">
+                            <thead className="table-light"><tr><th>Número de beneficio</th><th>Nombre</th><th /></tr></thead>
+                            <tbody>
+                              {paginatedMembers.map((member) => (
+                                <tr key={member.id} className={selectedMember?.id === member.id ? "table-primary" : ""} onClick={() => handleSelectMember(member)}>
+                                  <td className="fw-semibold">{member.benefitNum || "-"}</td>
+                                  <td>{member.fullName}</td>
+                                  <td className="text-end">
+                                    <button type="button" className="btn btn-outline-primary btn-sm" onClick={(event) => { event.stopPropagation(); openPaymentModal(member); }}>
+                                      Realizar pago
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
                     </div>
 
-                    <div className="row g-2 align-items-end mb-3">
-                      <div className="col-12 col-md-6">
-                        <label className="form-label visually-hidden" htmlFor="payment-member-search">Buscar socios</label>
-                        <input id="payment-member-search" type="search" className="form-control" placeholder="Buscar por nombre o beneficio" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} />
-                      </div>
-                      <div className="col-7 col-md-4">
-                        <label className="form-label visually-hidden" htmlFor="payment-page-size">Registros por página</label>
-                        <select id="payment-page-size" className="form-select" value={pageSize} onChange={(event) => setPageSize(Number(event.target.value))}>
-                          {pageSizeOptions.map((size) => <option key={size} value={size}>Mostrar {size}</option>)}
-                        </select>
-                      </div>
-                      <div className="col-5 col-md-2 text-end"><p className="mb-0 text-muted">{filteredMembers.length}</p></div>
-                    </div>
-
-                    {isLoadingMembers ? (
-                      <div className="text-center py-5"><div className="spinner-border text-primary" role="status"><span className="visually-hidden">Cargando socios...</span></div></div>
-                    ) : membersError ? (
-                      <div className="alert alert-warning mb-0" role="alert">{membersError}</div>
-                    ) : filteredMembers.length === 0 ? (
-                      <p className="text-muted text-center py-5 mb-0">{members.length === 0 ? "No hay socios activos registrados." : `No se encontraron socios para "${searchTerm}".`}</p>
-                    ) : (
-                      <div className="table-responsive">
-                        <table className="table table-hover align-middle mb-0">
-                          <thead className="table-light"><tr><th>Número de beneficio</th><th>Nombre</th><th /></tr></thead>
-                          <tbody>
-                            {paginatedMembers.map((member) => (
-                              <tr key={member.id} className={selectedMember?.id === member.id ? "table-primary" : ""} onClick={() => handleSelectMember(member)}>
-                                <td className="fw-semibold">{member.benefitNum || "-"}</td>
-                                <td>{member.fullName}</td>
-                                <td className="text-end">
-                                  <button type="button" className="btn btn-outline-primary btn-sm" onClick={(event) => { event.stopPropagation(); openPaymentModal(member); }}>
-                                    Realizar pago
-                                  </button>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
                     {!isLoadingMembers && !membersError && filteredMembers.length > 0 && (
-                      <div className="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 mt-4">
-                        <p className="mb-0 text-muted">Página {page} de {pageCount}</p>
+                      <div className="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 mt-4 pt-3 border-top">
+                        <div className="text-muted small">
+                          Página <strong>{page}</strong> de {pageCount}
+                        </div>
                         <nav aria-label="Paginación de socios activos">
-                          <ul className="pagination mb-0">
+                          <ul className="pagination pagination-sm mb-0">
                             <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
                               <button type="button" className="page-link" onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page === 1}>Anterior</button>
                             </li>
@@ -353,14 +394,30 @@ const Pagos = () => {
                     ) : (
                       <div className="table-responsive">
                         <table className="table table-hover align-middle mb-0">
-                          <thead className="table-light"><tr><th>Fecha</th><th>Mes</th><th>Importe</th><th>Comprobante</th></tr></thead>
+                          <thead className="table-light">
+                            <tr>
+                              <th>Fecha</th>
+                              <th>Mes</th>
+                              <th>Importe</th>
+                              <th className="text-end">Acciones</th>
+                            </tr>
+                          </thead>
                           <tbody>
                             {selectedMemberPayments.map((payment) => (
                               <tr key={payment.id}>
                                 <td>{formatDate(payment.payDate)}</td>
                                 <td>{payment.monthPaid}</td>
                                 <td>${payment.amount.toLocaleString("es-AR", { minimumFractionDigits: 2 })}</td>
-                                <td>{payment.voucherNumber}</td>
+                                <td className="text-end">
+                                  <button
+                                    type="button"
+                                    className="btn btn-link btn-sm p-0 text-decoration-none"
+                                    onClick={() => void fetchPaymentDetail(payment.id)}
+                                    disabled={isLoadingDetail}
+                                  >
+                                    Detalle
+                                  </button>
+                                </td>
                               </tr>
                             ))}
                           </tbody>
@@ -420,6 +477,55 @@ const Pagos = () => {
                     <button type="submit" className="btn btn-primary" disabled={isSaving}>{isSaving ? <><span className="spinner-border spinner-border-sm me-2" aria-hidden="true" />Guardando...</> : <><i className="bi bi-check-lg me-2" />Guardar</>}</button>
                   </div>
                 </form>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {selectedPaymentDetail && (
+        <>
+          <div className="modal-backdrop fade show" />
+          <div className="modal fade show d-block" tabIndex={-1} role="dialog" aria-modal="true">
+            <div className="modal-dialog modal-dialog-centered" role="document">
+              <div className="modal-content border-0 shadow">
+                <div className="modal-header bg-light">
+                  <h5 className="modal-title">Detalle del Pago</h5>
+                  <button type="button" className="btn-close" aria-label="Cerrar" onClick={() => setSelectedPaymentDetail(null)} />
+                </div>
+                <div className="modal-body p-0">
+                  <div className="list-group list-group-flush">
+                    <div className="list-group-item d-flex justify-content-between align-items-center py-3">
+                      <span className="text-muted small text-uppercase fw-bold">Socio</span>
+                      <span className="fw-semibold">{selectedMember?.fullName || "N/A"}</span>
+                    </div>
+                    <div className="list-group-item d-flex justify-content-between align-items-center py-3">
+                      <span className="text-muted small text-uppercase fw-bold">Fecha de Pago</span>
+                      <span>{formatDate(selectedPaymentDetail.payDate)}</span>
+                    </div>
+                    <div className="list-group-item d-flex justify-content-between align-items-center py-3">
+                      <span className="text-muted small text-uppercase fw-bold">Mes Abonado</span>
+                      <span className="badge bg-primary rounded-pill">{selectedPaymentDetail.monthPaid}</span>
+                    </div>
+                    <div className="list-group-item d-flex justify-content-between align-items-center py-3">
+                      <span className="text-muted small text-uppercase fw-bold">Importe</span>
+                      <span className="fw-bold text-success">${selectedPaymentDetail.amount.toLocaleString("es-AR", { minimumFractionDigits: 2 })}</span>
+                    </div>
+                    <div className="list-group-item d-flex justify-content-between align-items-center py-3">
+                      <span className="text-muted small text-uppercase fw-bold">N° Comprobante</span>
+                      <code className="text-dark fw-bold">{selectedPaymentDetail.voucherNumber}</code>
+                    </div>
+                    <div className="list-group-item py-3">
+                      <span className="text-muted small text-uppercase fw-bold d-block mb-2">Nota</span>
+                      <div className="p-2 bg-light rounded small text-muted">
+                        {selectedPaymentDetail.note || "Sin observaciones adicionales."}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="modal-footer bg-light">
+                  <button type="button" className="btn btn-secondary" onClick={() => setSelectedPaymentDetail(null)}>Cerrar</button>
+                </div>
               </div>
             </div>
           </div>
