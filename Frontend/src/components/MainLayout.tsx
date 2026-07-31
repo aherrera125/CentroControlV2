@@ -87,8 +87,8 @@ const MainLayout = () => {
               </button>
 
               <button className="profile-button" type="button" aria-label="Alejandro Herrera">
-                <span className="profile-avatar avatar-sm">AH</span>
-                <span className="profile-name d-none d-sm-inline">Alejandro Herrera</span>
+                <span className="profile-avatar avatar-sm">AS</span>
+                <span className="profile-name d-none d-sm-inline">Administrador del Sistema</span>
               </button>
             </div>
           </div>
