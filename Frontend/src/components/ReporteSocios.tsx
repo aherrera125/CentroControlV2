@@ -100,6 +100,72 @@ const ReporteSocios = () => {
     return filteredMembers.slice(start, start + pageSize);
   }, [filteredMembers, page, pageSize]);
 
+  const exportToPdf = () => {
+    const typeLabel =
+      selectedTypeId === "all"
+        ? "Todos los tipos de socio"
+        : typeMembers.find((t) => t.id === Number(selectedTypeId))?.name || "-";
+
+    const rows = filteredMembers
+      .map(
+        (m) => `
+        <tr>
+          <td>${m.benefitNum}</td>
+          <td>${m.fullName}</td>
+          <td>${m.dni}</td>
+          <td>${m.typeMember}</td>
+          <td>${m.phone}</td>
+          <td>${m.address}</td>
+        </tr>`
+      )
+      .join("");
+
+    const win = window.open("", "_blank", "width=900,height=650");
+    if (!win) return;
+
+    win.document.write(`
+      <!DOCTYPE html>
+      <html lang="es">
+      <head>
+        <meta charset="utf-8" />
+        <title>Reporte de Socios</title>
+        <style>
+          body { font-family: Arial, sans-serif; color: #212529; margin: 24px; }
+          h2 { margin: 0 0 4px; }
+          .subtitle { color: #6c757d; margin: 0 0 16px; font-size: 14px; }
+          table { width: 100%; border-collapse: collapse; font-size: 12px; }
+          th, td { border: 1px solid #dee2e6; padding: 6px 8px; text-align: left; }
+          th { background: #f8f9fa; }
+          tr:nth-child(even) { background: #f8f9fa; }
+        </style>
+      </head>
+      <body>
+        <h2>Reporte de Socios</h2>
+        <p class="subtitle">Tipo de socio: ${typeLabel} · Total: ${filteredMembers.length} socios</p>
+        <table>
+          <thead>
+            <tr>
+              <th>N° Beneficio</th>
+              <th>Nombre y Apellido</th>
+              <th>DNI</th>
+              <th>Tipo</th>
+              <th>Teléfono</th>
+              <th>Dirección</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows}
+          </tbody>
+        </table>
+      </body>
+      </html>
+    `);
+
+    win.document.close();
+    win.focus();
+    win.print();
+  };
+
   const getPaginationItems = (): (number | "ellipsis")[] => {
     if (pageCount <= 10) return Array.from({ length: pageCount }, (_, i) => i + 1);
     const firstPages = [1, 2, 3];
@@ -149,11 +215,19 @@ const ReporteSocios = () => {
               >
                 <i className="bi bi-arrow-clockwise me-2"></i>Actualizar
               </button>
+              <button
+                className="btn btn-outline-primary btn-sm d-flex align-items-center"
+                style={{ height: "38px" }}
+                onClick={exportToPdf}
+                disabled={isLoading || filteredMembers.length === 0}
+              >
+                <i className="bi bi-file-earmark-pdf me-2"></i>Exportar
+              </button>
               <span 
                 className="badge bg-primary-subtle text-primary border border-primary-subtle d-flex align-items-center px-3"
                 style={{ height: "38px", fontSize: "0.9rem" }}
               >
-                {filteredMembers.length} socios encontrados
+                {filteredMembers.length} socios
               </span>
             </div>
           </div>
