@@ -52,6 +52,6 @@ export const deleteTypeMember = async (req: Request, res: Response) => {
       message: `Los datos del tipo de socio con id ${id} se eliminaron exitosamente.`,
     });
   } catch (error) {
-    return res.status(500).json({ message: `Error al eliminar el tipo de socio.` });
+    return res.status(500).json({ message: `La obra social no se puede eliminar porque está asignado a un socio.` });
   }
 };

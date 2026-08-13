@@ -161,7 +161,7 @@ const TipoSocio = () => {
                 <div className="col-12 col-lg-7">
                   <div className="border rounded-3 h-100 p-3">
                     <div className="d-flex justify-content-between align-items-center gap-3 mb-3">
-                      <h3 className="h6 mb-0">Tipos de socio registrados</h3>
+                      <h3 className="h6 mb-0">Obras sociales registradas</h3>
                       <button
                         type="button"
                         className="btn btn-outline-primary btn-sm"
@@ -182,7 +182,7 @@ const TipoSocio = () => {
                     ) : loadError ? (
                       <div className="alert alert-warning mb-0" role="alert">{loadError}</div>
                     ) : typeMembers.length === 0 ? (
-                      <p className="text-muted text-center py-5 mb-0">No hay tipos de socio registrados.</p>
+                      <p className="text-muted text-center py-5 mb-0">No hay obras sociales registradas.</p>
                     ) : (
                       <div className="table-responsive">
                         <table className="table table-hover align-middle mb-0">
@@ -217,7 +217,7 @@ const TipoSocio = () => {
                 <div className="col-12 col-lg-5">
                   <div className="border rounded-3 h-100 p-3">
                     <h3 className="h6 mb-3">
-                      {selectedTypeId === null ? "Nuevo tipo de socio" : "Editar tipo de socio"}
+                      {selectedTypeId === null ? "Nueva obra social" : "Editar obra social"}
                     </h3>
                     <form noValidate onSubmit={handleSave}>
                       <label className="form-label fw-semibold" htmlFor="type-member-name">
@@ -240,20 +240,20 @@ const TipoSocio = () => {
                       )}
                       {saveError && <div className="alert alert-danger mt-3 mb-0" role="alert">{saveError}</div>}
 
-                      <div className="d-flex flex-wrap gap-2 mt-4">
-                        <button type="submit" className="btn btn-primary" disabled={isSaving}>
+                      <div className="d-flex align-items-center gap-2 mt-4">
+                        <button type="submit" className="btn btn-primary text-nowrap" disabled={isSaving}>
                           {isSaving ? <><span className="spinner-border spinner-border-sm me-2" aria-hidden="true" />Guardando...</> : <><i className="bi bi-check-lg me-2" />Guardar</>}
                         </button>
                         {selectedTypeId !== null && (
-                          <button type="button" className="btn btn-outline-danger" onClick={() => void handleDelete()} disabled={isSaving}>
+                          <button type="button" className="btn btn-outline-danger text-nowrap" onClick={() => void handleDelete()} disabled={isSaving}>
                             <i className="bi bi-trash me-2" />Eliminar
                           </button>
                         )}
-                        <button type="button" className="btn btn-outline-secondary" onClick={handleClear} disabled={isSaving}>
+                        <button type="button" className="btn btn-outline-secondary text-nowrap" onClick={handleClear} disabled={isSaving}>
                           <i className="bi bi-arrow-clockwise me-2" />Limpiar
                         </button>
-                        {saveSuccess && <span className="text-success align-self-center" role="status"><i className="bi bi-check-circle me-2" />{saveSuccess}</span>}
                       </div>
+                      {saveSuccess && <div className="text-success mt-3" role="status"><i className="bi bi-check-circle me-2" />{saveSuccess}</div>}
                     </form>
                   </div>
                 </div>
