@@ -7,7 +7,7 @@ export type TypeMemberRow = ITypeMember & RowDataPacket;
 
 export const findAllTypeMember = async (): Promise<ITypeMember[]> => {
   const [rows] = await pool.query<TypeMemberRow[]>(
-    `SELECT * FROM type_member`,
+    `SELECT * FROM type_member ORDER BY NAME ASC`,
   );
   return rows;
 };

@@ -184,7 +184,7 @@ const SocioNuevo = () => {
                           onChange={(event) =>
                             handleInputChange("fullName", event.target.value)
                           }
-                          placeholder="Nombre y apellido"
+                          placeholder="Apellido y nombre"
                         />
                         {fieldErrors.fullName && (
                           <div className="invalid-feedback d-block">

@@ -168,6 +168,7 @@ const Socios = () => {
       status: member.status,
       typeMemberId: member.typeMemberId,
       dateOfBirth: member.dateOfBirth,
+      address: member.address,
     });
   };
 
@@ -178,7 +179,7 @@ const Socios = () => {
     setSaveSuccess(null);
   };
 
-  const handleEditedMemberChange = (field: keyof Pick<Member, "fullName" | "dni" | "benefitNum" | "phone" | "status" | "typeMemberId" | "dateOfBirth">, value: string) => {
+  const handleEditedMemberChange = (field: keyof Pick<Member, "fullName" | "dni" | "benefitNum" | "phone" | "status" | "typeMemberId" | "dateOfBirth" | "address">, value: string) => {
     if (!editedMember) return;
     setEditedMember((current) => ({
       ...current,
@@ -203,7 +204,7 @@ const Socios = () => {
         typeMemberId: editedMember.typeMemberId ?? selectedMember.typeMemberId,
         dateOfBirth: editedMember.dateOfBirth ?? selectedMember.dateOfBirth,
         salary: selectedMember.salary ?? 0,
-        address: selectedMember.address ?? "",
+        address: editedMember.address ?? selectedMember.address ?? "",
       };
 
       const response = await fetch(`/api/members/${selectedMember.id}`, {
@@ -230,6 +231,7 @@ const Socios = () => {
         typeMemberId: updatedTypeMemberId,
         typeMember: typeMembers.find((type) => type.id === updatedTypeMemberId)?.name ?? selectedMember.typeMember,
         dateOfBirth: editedMember.dateOfBirth ?? selectedMember.dateOfBirth,
+        address: editedMember.address ?? selectedMember.address ?? "",
       } as Member;
 
       setSelectedMember(updatedMember);
@@ -241,6 +243,7 @@ const Socios = () => {
         status: updatedMember.status,
         typeMemberId: updatedMember.typeMemberId,
         dateOfBirth: updatedMember.dateOfBirth,
+        address: updatedMember.address,
       });
       setMembers((current) =>
         current.map((item) => (item.id === updatedMember.id ? updatedMember : item)),
@@ -559,8 +562,8 @@ const Socios = () => {
                                   <input
                                     type="text"
                                     className="form-control"
-                                    value={selectedMember.address ?? ""}
-                                    readOnly
+                                    value={editedMember.address ?? ""}
+                                    onChange={(event) => handleEditedMemberChange("address", event.target.value)}
                                   />
                                 </div>
                               </div>

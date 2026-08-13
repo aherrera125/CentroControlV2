@@ -193,7 +193,7 @@ const ReportePagos = () => {
           <thead>
             <tr>
               <th>N° Beneficio</th>
-              <th>Nombre y Apellido</th>
+              <th>Apellido y Nombre</th>
               <th>DNI</th>
               <th>Pagos</th>
               <th>Total abonado</th>
@@ -299,7 +299,7 @@ const ReportePagos = () => {
                 <thead className="table-light">
                   <tr>
                     <th>N° Beneficio</th>
-                    <th>Nombre y Apellido</th>
+                    <th>Apellido y Nombre</th>
                     <th>DNI</th>
                     <th>Pagos</th>
                     <th>Total abonado</th>
