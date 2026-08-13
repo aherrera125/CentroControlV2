@@ -47,7 +47,7 @@ export const findAllMembers = async (): Promise<IMember[]> => {
             tm.name typeMember 
     FROM MEMBER me
     INNER JOIN TYPE_MEMBER tm ON tm.id = me.typeMemberId
-    ORDER BY me.id DESC`,
+    ORDER BY me.fullname ASC`,
   );
   return rows;
 };

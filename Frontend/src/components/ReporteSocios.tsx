@@ -83,10 +83,11 @@ const ReporteSocios = () => {
   }, []);
 
   const filteredMembers = useMemo(() => {
-    return members.filter((m) => {
-      const matchesType = selectedTypeId === "all" || m.typeMemberId === Number(selectedTypeId);
-      return matchesType;
-    });
+    return members
+      .filter((m) => {
+        const matchesType = selectedTypeId === "all" || m.typeMemberId === Number(selectedTypeId);
+        return matchesType;
+      });
   }, [members, selectedTypeId]);
 
   const pageCount = Math.max(1, Math.ceil(filteredMembers.length / pageSize));
@@ -146,7 +147,7 @@ const ReporteSocios = () => {
           <thead>
             <tr>
               <th>N° Beneficio</th>
-              <th>Nombre y Apellido</th>
+              <th>Apellido y Nombre</th>
               <th>DNI</th>
               <th>Tipo</th>
               <th>Teléfono</th>
@@ -287,7 +288,7 @@ const ReporteSocios = () => {
                 <thead className="table-light">
                   <tr>
                     <th>N° Beneficio</th>
-                    <th>Nombre y Apellido</th>
+                    <th>Apellido y Nombre</th>
                     <th>DNI</th>
                     <th>Tipo</th>
                     <th>Teléfono</th>
