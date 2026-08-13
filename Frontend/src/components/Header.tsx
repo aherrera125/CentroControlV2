@@ -14,10 +14,12 @@ const Header = ({ sidebarOpen, onToggleSidebar }: HeaderProps) => {
     const initialDark = storedTheme === 'dark';
     setDarkMode(initialDark);
     document.documentElement.dataset.theme = initialDark ? 'dark' : 'light';
+    document.documentElement.dataset.bsTheme = initialDark ? 'dark' : 'light';
   }, []);
 
   useEffect(() => {
     document.documentElement.dataset.theme = darkMode ? 'dark' : 'light';
+    document.documentElement.dataset.bsTheme = darkMode ? 'dark' : 'light';
     window.localStorage.setItem('theme', darkMode ? 'dark' : 'light');
   }, [darkMode]);
 
@@ -53,8 +55,8 @@ const Header = ({ sidebarOpen, onToggleSidebar }: HeaderProps) => {
             </button>
 
             <button className="profile-button" type="button" aria-label="Alejandro Herrera">
-              <span className="profile-avatar avatar-sm">AS</span>
-              <span className="profile-name d-none d-sm-inline">Administrador del Sistema</span>
+              <span className="profile-avatar avatar-sm">GS</span>
+              <span className="profile-name d-none d-sm-inline">Gestor del Sistema</span>
             </button>
           </div>
         </div>
