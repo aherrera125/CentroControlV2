@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 const menuItems = [  
   { to: '/socios', label: 'Socios', icon: 'bi-people' },
   { to: '/nuevo-socio', label: 'Nuevo Socio', icon: 'bi-person-plus' },
-  { to: '/tipo-socio', label: 'Tipo de Socio', icon: 'bi-person-vcard' },
+  { to: '/tipo-socio', label: 'Obra Social', icon: 'bi-person-vcard' },
   { to: '/reporte-socios', label: 'Reporte de Socios', icon: 'bi-bar-chart-line' },
   { to: '/pagos', label: 'Pagos', icon: 'bi-currency-dollar' },
   { to: '/reporte-pagos', label: 'Reporte de Pagos', icon: 'bi-bar-chart-line' },  
