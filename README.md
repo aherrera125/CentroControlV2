@@ -1,105 +1,65 @@
 # Centro Control V2
 
-Un proyecto de gestión de socios, usuarios, tipos de socio y pagos con backend en `Node.js`/`Express` y frontend en `React` + `Vite`.
+Aplicación para la administración de socios de un centro de jubilados. El proyecto está dividido en un frontend React/TypeScript y un backend Express/TypeScript conectado a MySQL.
 
-## Estructura del repositorio
+## Contenido
 
-- `Backend/` - backend en TypeScript y MySQL.
-- `Frontend/` - frontend en React + Vite.
+- [Frontend](./Frontend/README.md)
+- [Backend](./Backend/README.md)
+- [Documentación de la API y ejemplos `curl`](./Backend/src/StockControl.md)
 
-## Backend
+## Requisitos
 
-### Requisitos
+- Node.js y npm.
+- MySQL con la base de datos y las tablas requeridas por la aplicación.
 
-- Node.js 18+ recomendado
-- MySQL
+## Configuración inicial
 
-### Instalación
+1. Configura las variables de conexión a MySQL y las variables del servidor en `Backend/.env`. Usa `Backend/.env.example` como referencia; reemplaza sus valores por los de tu entorno y no compartas ni subas credenciales.
+2. Instala las dependencias de ambos proyectos:
 
-```bash
-cd Backend
-npm install
-```
+   ```bash
+   cd Backend
+   npm install
+   cd ../Frontend
+   npm install
+   ```
 
-### Ejecutar en desarrollo
+3. Inicia el backend y el frontend en terminales separadas:
 
-```bash
-cd Backend
-npm run dev
-```
+   ```bash
+   cd Backend
+   npm run dev
+   ```
 
-### Compilar para producción
+   ```bash
+   cd Frontend
+   npm run dev
+   ```
+
+   El backend escucha en `http://localhost:3000`. El servidor de desarrollo de Vite reenvía las llamadas `/api` a ese backend.
+
+## Funcionalidades
+
+- Gestión y búsqueda de socios.
+- Alta y mantenimiento de tipos de socio.
+- Registro de pagos, historial por socio, detalle editable y eliminación con confirmación.
+- Reportes de socios y pagos.
+- Administración de usuarios.
+
+La aplicación web se ejecuta desde Vite durante el desarrollo. Las rutas disponibles se encuentran en `Frontend/src/App.tsx`.
+
+## Comprobaciones
 
 ```bash
 cd Backend
 npm run build
 ```
 
-### Documentación de API
-
-La documentación de endpoints del backend está en:
-
-- `Backend/src/StockControl.md`
-
-## Frontend
-
-### Instalación
-
 ```bash
 cd Frontend
-npm install
+npm run build
+npm run lint
 ```
 
-### Ejecutar en desarrollo
-
-```bash
-cd Frontend
-npm run dev
-```
-
-## Endpoints principales
-
-### Autenticación
-
-- `POST /auth/register` - registra un usuario y encripta la contraseña.
-- `POST /auth/login` - valida email y contraseña.
-
-### Socios
-
-- `GET /api/members`
-- `POST /api/members`
-- `PUT /api/members/:id`
-- `DELETE /api/members/:id`
-
-### Usuarios
-
-- `GET /api/users`
-- `POST /api/users`
-- `PUT /api/users`
-- `DELETE /api/users`
-
-### Tipos de socio
-
-- `GET /api/typeMember`
-- `POST /api/typeMember`
-- `PUT /api/typeMember/:id`
-- `DELETE /api/typeMember/:id`
-
-### Pagos
-
-- `GET /api/pay`
-- `POST /api/pay`
-- `PUT /api/pay/:id`
-- `DELETE /api/pay/:id`
-
-## Notas importantes
-
-- El backend guarda passwords encriptadas con `bcrypt`.
-- El login actual solo valida credenciales; no genera JWT.
-- Las rutas de creación, actualización y eliminación están protegidas con permisos.
-- Revisa `Backend/src/StockControl.md` para ejemplos de `curl`.
-
-## Recomendaciones
-
-- Mantén las variables de entorno y credenciales seguras.
-- Verifica que MySQL esté configurado antes de levantar el backend.
+Consulta los README de cada paquete para más detalles de ejecución y desarrollo.

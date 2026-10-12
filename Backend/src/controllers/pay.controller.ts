@@ -12,6 +12,20 @@ export const getPay = async (_req: Request, res: Response) => {
   }
 };
 
+export const getPayById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const data = await payService.getPayById(id);
+    if (!data) {
+      return res.status(404).json({ message: `Pago no encontrado.` });
+    }
+    return res.status(200).json({ data });
+  } catch (error) {
+    console.error("Error al obtener el detalle del pago:", error);
+    return res.status(500).json({ message: `Error al obtener el detalle del pago.` });
+  }
+};
+
 export const addPay = async (req: Request, res: Response) => {
   try {
     const payData: IPay = req.body;

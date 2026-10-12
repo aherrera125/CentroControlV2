@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
-  getPay,  
+  getPay,
+  getPayById,
   addPay,
   updatePay,
   deletePay,
@@ -10,6 +11,7 @@ import { authPermission } from "../middlewares/authorizePermission.middleware";
 const router = Router();
 
 router.get("/", /*authPermission("member:read"),*/ getPay);
+router.get("/:id", /*authPermission("member:read"),*/ getPayById);
 router.post("/", /*authPermission("member:create"),*/ addPay);
 router.put("/:id", /*authPermission("member:update"),*/ updatePay);
 router.delete("/:id", /*authPermission("member:delete"),*/ deletePay);

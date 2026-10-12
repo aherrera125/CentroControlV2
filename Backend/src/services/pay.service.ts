@@ -1,5 +1,6 @@
 import {
   findAllPay,  
+  findPayById,
   createPay,
   updatePay,
   deletePay,
@@ -8,6 +9,10 @@ import { IPay } from "../types/IPay";
 
 export const getAllPay = async () => {
   return await findAllPay();
+};
+
+export const getPayById = async (id: string) => {
+  return await findPayById(id);
 };
 
 export const addPay = async (data: IPay) => {
