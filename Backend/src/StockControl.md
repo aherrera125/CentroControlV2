@@ -181,6 +181,12 @@ curl -X DELETE http://localhost:3000/api/typeMember/1
 curl -X GET http://localhost:3000/api/pay
 ```
 
+### GET - Obtener el detalle de un pago
+
+```bash
+curl -X GET http://localhost:3000/api/pay/1
+```
+
 ### POST - Crear un pago
 
 ```bash

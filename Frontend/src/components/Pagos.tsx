@@ -13,6 +13,16 @@ type Payment = {
   memberId: number;
   amount: number;
   payDate: string;
+  dueDate: string;
+  status: string;
+  monthPaid: string;
+  voucherNumber: string;
+  note: string;
+};
+
+type PaymentDetailForm = {
+  amount: string;
+  payDate: string;
   monthPaid: string;
   voucherNumber: string;
   note: string;
@@ -32,9 +42,29 @@ const emptyPaymentForm: PaymentForm = {
   note: "",
 };
 
+const emptyPaymentDetailForm: PaymentDetailForm = {
+  amount: "",
+  payDate: "",
+  monthPaid: "",
+  voucherNumber: "",
+  note: "",
+};
+
 const pageSizeOptions = [10, 20, 50, 100];
 
 const getToday = () => new Date().toISOString().slice(0, 10);
+
+const toPayment = (payment: Record<string, unknown>): Payment => ({
+  id: Number(payment.id ?? payment.payId ?? 0),
+  memberId: Number(payment.memberId ?? 0),
+  amount: Number(payment.amount ?? 0),
+  payDate: String(payment.payDate ?? "").slice(0, 10),
+  dueDate: String(payment.dueDate ?? payment.payDate ?? "").slice(0, 10),
+  status: String(payment.status ?? "paid"),
+  monthPaid: String(payment.monthPaid ?? ""),
+  voucherNumber: String(payment.voucherNumber ?? payment.voucherNum ?? ""),
+  note: String(payment.note ?? ""),
+});
 
 const formatDate = (date: string) => {
   const [year, month, day] = String(date).slice(0, 10).split("-");
@@ -65,8 +95,23 @@ const Pagos = () => {
   const [paymentsError, setPaymentsError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
+  const [pendingDeletePayment, setPendingDeletePayment] = useState<Payment | null>(null);
+  const [isDeletingPayment, setIsDeletingPayment] = useState(false);
+  const [paymentDeleteError, setPaymentDeleteError] = useState<string | null>(null);
   const [selectedPaymentDetail, setSelectedPaymentDetail] = useState<Payment | null>(null);
+  const [paymentDetailForm, setPaymentDetailForm] = useState<PaymentDetailForm>(emptyPaymentDetailForm);
+  const [detailFieldErrors, setDetailFieldErrors] = useState<Record<keyof PaymentDetailForm, boolean>>({
+    amount: false,
+    payDate: false,
+    monthPaid: false,
+    voucherNumber: false,
+    note: false,
+  });
+  const [isSavingDetail, setIsSavingDetail] = useState(false);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
+  const [detailError, setDetailError] = useState<string | null>(null);
+  const [detailSaveError, setDetailSaveError] = useState<string | null>(null);
+  const [detailSaveSuccess, setDetailSaveSuccess] = useState<string | null>(null);
 
   const loadMembers = async () => {
     setIsLoadingMembers(true);
@@ -118,15 +163,7 @@ const Pagos = () => {
           : [];
 
       setPayments(
-        data.map((payment: Record<string, unknown>) => ({
-          id: Number(payment.id ?? payment.payId ?? 0),
-          memberId: Number(payment.memberId ?? 0),
-          amount: Number(payment.amount ?? 0),
-          payDate: String(payment.payDate ?? ""),
-          monthPaid: String(payment.monthPaid ?? ""),
-          voucherNumber: String(payment.voucherNumber ?? payment.voucherNum ?? ""),
-          note: String(payment.note ?? ""),
-        })),
+        data.map((payment: Record<string, unknown>) => toPayment(payment)),
       );
     } catch (error) {
       console.error("Error al cargar pagos:", error);
@@ -281,33 +318,134 @@ const Pagos = () => {
     }
   };
 
+  const handlePaymentDetailChange = (field: keyof PaymentDetailForm, value: string) => {
+    setPaymentDetailForm((current) => ({ ...current, [field]: value }));
+    setDetailFieldErrors((current) => ({ ...current, [field]: false }));
+    setDetailSaveError(null);
+    setDetailSaveSuccess(null);
+  };
+
+  const closePaymentDetail = () => {
+    setSelectedPaymentDetail(null);
+    setDetailSaveError(null);
+    setDetailSaveSuccess(null);
+  };
+
+  const handleUpdatePayment = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!selectedPaymentDetail) return;
+
+    const errors = {
+      amount: !paymentDetailForm.amount.trim() || Number(paymentDetailForm.amount) <= 0,
+      payDate: !paymentDetailForm.payDate.trim(),
+      monthPaid: !paymentDetailForm.monthPaid.trim(),
+      voucherNumber: !paymentDetailForm.voucherNumber.trim(),
+      note: !paymentDetailForm.note.trim(),
+    };
+    setDetailFieldErrors(errors);
+    setDetailSaveError(null);
+    setDetailSaveSuccess(null);
+
+    if (Object.values(errors).some(Boolean)) return;
+
+    setIsSavingDetail(true);
+    try {
+      const response = await fetch(`/api/pay/${selectedPaymentDetail.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          memberId: selectedPaymentDetail.memberId,
+          amount: Number(paymentDetailForm.amount),
+          payDate: paymentDetailForm.payDate,
+          dueDate: selectedPaymentDetail.dueDate || paymentDetailForm.payDate,
+          status: selectedPaymentDetail.status || "paid",
+          monthPaid: paymentDetailForm.monthPaid.trim(),
+          voucherNumber: paymentDetailForm.voucherNumber.trim(),
+          note: paymentDetailForm.note.trim(),
+        }),
+      });
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null);
+        throw new Error(payload?.message ?? "No se pudo actualizar el pago.");
+      }
+
+      setSelectedPaymentDetail((current) =>
+        current
+          ? {
+              ...current,
+              amount: Number(paymentDetailForm.amount),
+              payDate: paymentDetailForm.payDate,
+              monthPaid: paymentDetailForm.monthPaid.trim(),
+              voucherNumber: paymentDetailForm.voucherNumber.trim(),
+              note: paymentDetailForm.note.trim(),
+            }
+          : current,
+      );
+      setDetailSaveSuccess("El pago se actualizó correctamente.");
+      await loadPayments();
+    } catch (error) {
+      console.error("Error al actualizar pago:", error);
+      setDetailSaveError(error instanceof Error ? error.message : "No se pudo actualizar el pago.");
+    } finally {
+      setIsSavingDetail(false);
+    }
+  };
+
+  const handleDeletePayment = async () => {
+    if (!pendingDeletePayment) return;
+    setPaymentDeleteError(null);
+    setIsDeletingPayment(true);
+    try {
+      const response = await fetch(`/api/pay/${pendingDeletePayment.id}`, { method: "DELETE" });
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null);
+        throw new Error(payload?.message ?? "No se pudo eliminar el pago.");
+      }
+
+      setPayments((current) => current.filter((payment) => payment.id !== pendingDeletePayment.id));
+      if (selectedPaymentDetail?.id === pendingDeletePayment.id) closePaymentDetail();
+      setPendingDeletePayment(null);
+    } catch (error) {
+      console.error("Error al eliminar pago:", error);
+      setPaymentDeleteError(error instanceof Error ? error.message : "No se pudo eliminar el pago.");
+    } finally {
+      setIsDeletingPayment(false);
+    }
+  };
+
   const fetchPaymentDetail = async (paymentId: number) => {
     setIsLoadingDetail(true);
+    setDetailError(null);
     try {
       const response = await fetch(`/api/pay/${paymentId}`);
-      if (!response.ok) {
-        const localPayment = payments.find((p) => p.id === paymentId);
-        if (localPayment) {
-          setSelectedPaymentDetail(localPayment);
-          return;
-        }
-        throw new Error("No se pudo cargar el detalle del pago.");
+      if (!response.ok) throw new Error("No se pudo cargar el detalle del pago.");
+
+      const payload: unknown = await response.json();
+      if (!payload || typeof payload !== "object" || !("data" in payload)) {
+        throw new Error("La respuesta del servidor no contiene el detalle del pago.");
       }
-      const payload: any = await response.json();
-      const paymentData = payload.data || payload;
-      setSelectedPaymentDetail({
-        id: Number(paymentData.id ?? paymentData.payId ?? 0),
-        memberId: Number(paymentData.memberId ?? 0),
-        amount: Number(paymentData.amount ?? 0),
-        payDate: String(paymentData.payDate ?? ""),
-        monthPaid: String(paymentData.monthPaid ?? ""),
-        voucherNumber: String(paymentData.voucherNumber ?? paymentData.voucherNum ?? ""),
-        note: String(paymentData.note ?? ""),
+      const payment = toPayment((payload as { data: Record<string, unknown> }).data);
+      setSelectedPaymentDetail(payment);
+      setPaymentDetailForm({
+        amount: String(payment.amount),
+        payDate: payment.payDate,
+        monthPaid: payment.monthPaid,
+        voucherNumber: payment.voucherNumber,
+        note: payment.note,
       });
+      setDetailFieldErrors({
+        amount: false,
+        payDate: false,
+        monthPaid: false,
+        voucherNumber: false,
+        note: false,
+      });
+      setDetailSaveError(null);
+      setDetailSaveSuccess(null);
     } catch (error) {
       console.error("Error al cargar detalle:", error);
-      const localPayment = payments.find((p) => p.id === paymentId);
-      if (localPayment) setSelectedPaymentDetail(localPayment);
+      setDetailError(error instanceof Error ? error.message : "No se pudo cargar el detalle del pago.");
     } finally {
       setIsLoadingDetail(false);
     }
@@ -407,6 +545,8 @@ const Pagos = () => {
                         {selectedMember && <p className="mb-0 text-muted small">{selectedMemberPayments.length} registros</p>}
                       </div>
 
+                      {detailError && <div className="alert alert-danger py-2" role="alert">{detailError}</div>}
+
                       {selectedMember && (
                         <div className="row g-2 align-items-end mb-3">
                           <div className="col-12">
@@ -442,15 +582,29 @@ const Pagos = () => {
                                 <tr key={payment.id}>
                                   <td>{formatDate(payment.payDate)}</td>                                
                                   <td>${payment.amount.toLocaleString("es-AR", { minimumFractionDigits: 2 })}</td>
-                                  <td className="text-end">
-                                    <button
-                                      type="button"
-                                      className="btn btn-link btn-sm p-0 text-decoration-none"
-                                      onClick={() => void fetchPaymentDetail(payment.id)}
-                                      disabled={isLoadingDetail}
-                                    >
-                                      Detalle
-                                    </button>
+                                  <td>
+                                    <div className="d-flex justify-content-end align-items-center gap-2">
+                                      <button
+                                        type="button"
+                                        className="btn btn-link btn-sm p-0 text-decoration-none"
+                                        onClick={() => void fetchPaymentDetail(payment.id)}
+                                        disabled={isLoadingDetail}
+                                      >
+                                        Detalle
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className="btn btn-outline-danger btn-sm"
+                                        aria-label="Eliminar pago"
+                                        title="Eliminar pago"
+                                        onClick={() => {
+                                          setPaymentDeleteError(null);
+                                          setPendingDeletePayment(payment);
+                                        }}
+                                      >
+                                        <i className="bi bi-trash" aria-hidden="true" />
+                                      </button>
+                                    </div>
                                   </td>
                                 </tr>
                               ))}
@@ -527,10 +681,14 @@ const Pagos = () => {
                         {fieldErrors.note && <div className="invalid-feedback d-block"><small>Este campo es obligatorio</small></div>}
                       </div>
                     </div>
-                    {saveError && <div className="alert alert-danger mt-3 mb-0" role="alert">{saveError}</div>}
-                    {saveSuccess && <div className="alert alert-success mt-3 mb-0" role="alert">{saveSuccess}</div>}
                   </div>
                   <div className="modal-footer">
+                    {(saveError || saveSuccess) && (
+                      <div className={`me-auto small ${saveError ? "text-danger" : "text-success"}`} role={saveError ? "alert" : "status"}>
+                        <i className={`bi ${saveError ? "bi-exclamation-circle" : "bi-check-circle"} me-2`} aria-hidden="true" />
+                        {saveError || saveSuccess}
+                      </div>
+                    )}
                     <button type="button" className="btn btn-outline-secondary" onClick={handleClear} disabled={isSaving}><i className="bi bi-arrow-clockwise me-2" />Limpiar</button>
                     <button type="submit" className="btn btn-primary" disabled={isSaving}>{isSaving ? <><span className="spinner-border spinner-border-sm me-2" aria-hidden="true" />Guardando...</> : <><i className="bi bi-check-lg me-2" />Guardar</>}</button>
                   </div>
@@ -545,44 +703,142 @@ const Pagos = () => {
         <>
           <div className="modal-backdrop fade show" />
           <div className="modal fade show d-block" tabIndex={-1} role="dialog" aria-modal="true">
-            <div className="modal-dialog modal-dialog-centered" role="document">
+            <div className="modal-dialog modal-dialog-centered modal-lg" role="document">
               <div className="modal-content border-0 shadow">
-                <div className="modal-header bg-light">
-                  <h5 className="modal-title">Detalle del Pago</h5>
-                  <button type="button" className="btn-close" aria-label="Cerrar" onClick={() => setSelectedPaymentDetail(null)} />
+                <div className="modal-header">
+                  <div>
+                    <h5 className="modal-title">Detalle del pago</h5>
+                    <p className="small text-muted mb-0">ID: {selectedPaymentDetail.id}</p>
+                  </div>
+                  <button type="button" className="btn-close" aria-label="Cerrar" onClick={closePaymentDetail} disabled={isSavingDetail} />
                 </div>
-                <div className="modal-body p-0">
-                  <div className="list-group list-group-flush">
-                    <div className="list-group-item d-flex justify-content-between align-items-center py-3">
-                      <span className="text-muted small text-uppercase fw-bold">Socio</span>
-                      <span className="fw-semibold">{selectedMember?.fullName || "N/A"}</span>
-                    </div>
-                    <div className="list-group-item d-flex justify-content-between align-items-center py-3">
-                      <span className="text-muted small text-uppercase fw-bold">Fecha de Pago</span>
-                      <span>{formatDate(selectedPaymentDetail.payDate)}</span>
-                    </div>
-                    <div className="list-group-item d-flex justify-content-between align-items-center py-3">
-                      <span className="text-muted small text-uppercase fw-bold">Mes Abonado</span>
-                      <span className="badge bg-primary rounded-pill">{selectedPaymentDetail.monthPaid}</span>
-                    </div>
-                    <div className="list-group-item d-flex justify-content-between align-items-center py-3">
-                      <span className="text-muted small text-uppercase fw-bold">Importe</span>
-                      <span className="fw-bold text-success">${selectedPaymentDetail.amount.toLocaleString("es-AR", { minimumFractionDigits: 2 })}</span>
-                    </div>
-                    <div className="list-group-item d-flex justify-content-between align-items-center py-3">
-                      <span className="text-muted small text-uppercase fw-bold">N° Comprobante</span>
-                      <code className="text-dark fw-bold">{selectedPaymentDetail.voucherNumber}</code>
-                    </div>
-                    <div className="list-group-item py-3">
-                      <span className="text-muted small text-uppercase fw-bold d-block mb-2">Nota</span>
-                      <div className="p-2 bg-light rounded small text-muted">
-                        {selectedPaymentDetail.note || "Sin observaciones adicionales."}
+                <form noValidate onSubmit={handleUpdatePayment}>
+                  <div className="modal-body">
+                    <div className="row gy-3">
+                      <div className="col-12 col-md-6">
+                        <label className="form-label" htmlFor="payment-detail-member">Socio</label>
+                        <input id="payment-detail-member" className="form-control" value={selectedMember?.fullName || "N/A"} readOnly />
+                      </div>
+                      <div className="col-12 col-md-6">
+                        <label className="form-label fw-semibold" htmlFor="payment-detail-date">Fecha de pago <span className="text-danger">*</span></label>
+                        <input
+                          id="payment-detail-date"
+                          type="date"
+                          className={`form-control ${detailFieldErrors.payDate ? "is-invalid" : ""}`}
+                          value={paymentDetailForm.payDate}
+                          onChange={(event) => handlePaymentDetailChange("payDate", event.target.value)}
+                          disabled={isSavingDetail}
+                        />
+                        {detailFieldErrors.payDate && <div className="invalid-feedback d-block"><small>Ingrese una fecha válida</small></div>}
+                      </div>
+                      <div className="col-12 col-md-6">
+                        <label className="form-label fw-semibold" htmlFor="payment-detail-amount">Importe <span className="text-danger">*</span></label>
+                        <input
+                          id="payment-detail-amount"
+                          type="number"
+                          min="0.01"
+                          step="0.01"
+                          className={`form-control ${detailFieldErrors.amount ? "is-invalid" : ""}`}
+                          value={paymentDetailForm.amount}
+                          onChange={(event) => handlePaymentDetailChange("amount", event.target.value)}
+                          disabled={isSavingDetail}
+                        />
+                        {detailFieldErrors.amount && <div className="invalid-feedback d-block"><small>Ingrese un importe válido</small></div>}
+                      </div>
+                      <div className="col-12 col-md-6">
+                        <label className="form-label fw-semibold" htmlFor="payment-detail-month">Mes abonado <span className="text-danger">*</span></label>
+                        <input
+                          id="payment-detail-month"
+                          type="text"
+                          className={`form-control ${detailFieldErrors.monthPaid ? "is-invalid" : ""}`}
+                          value={paymentDetailForm.monthPaid}
+                          onChange={(event) => handlePaymentDetailChange("monthPaid", event.target.value)}
+                          disabled={isSavingDetail}
+                        />
+                        {detailFieldErrors.monthPaid && <div className="invalid-feedback d-block"><small>Este campo es obligatorio</small></div>}
+                      </div>
+                      <div className="col-12">
+                        <label className="form-label fw-semibold" htmlFor="payment-detail-voucher">N° de comprobante <span className="text-danger">*</span></label>
+                        <input
+                          id="payment-detail-voucher"
+                          type="text"
+                          className={`form-control ${detailFieldErrors.voucherNumber ? "is-invalid" : ""}`}
+                          value={paymentDetailForm.voucherNumber}
+                          onChange={(event) => handlePaymentDetailChange("voucherNumber", event.target.value)}
+                          disabled={isSavingDetail}
+                        />
+                        {detailFieldErrors.voucherNumber && <div className="invalid-feedback d-block"><small>Este campo es obligatorio</small></div>}
+                      </div>
+                      <div className="col-12">
+                        <label className="form-label fw-semibold" htmlFor="payment-detail-note">Nota <span className="text-danger">*</span></label>
+                        <textarea
+                          id="payment-detail-note"
+                          className={`form-control ${detailFieldErrors.note ? "is-invalid" : ""}`}
+                          rows={3}
+                          value={paymentDetailForm.note}
+                          onChange={(event) => handlePaymentDetailChange("note", event.target.value)}
+                          disabled={isSavingDetail}
+                        />
+                        {detailFieldErrors.note && <div className="invalid-feedback d-block"><small>Este campo es obligatorio</small></div>}
                       </div>
                     </div>
                   </div>
+                  <div className="modal-footer">
+                    {(detailSaveError || detailSaveSuccess) && (
+                      <div className={`me-auto small ${detailSaveError ? "text-danger" : "text-success"}`} role={detailSaveError ? "alert" : "status"}>
+                        <i className={`bi ${detailSaveError ? "bi-exclamation-circle" : "bi-check-circle"} me-2`} aria-hidden="true" />
+                        {detailSaveError || detailSaveSuccess}
+                      </div>
+                    )}
+                    <button type="button" className="btn btn-outline-secondary" onClick={closePaymentDetail} disabled={isSavingDetail}>Cerrar</button>
+                    <button type="submit" className="btn btn-primary" disabled={isSavingDetail}>
+                      {isSavingDetail ? <><span className="spinner-border spinner-border-sm me-2" aria-hidden="true" />Guardando...</> : <><i className="bi bi-check-lg me-2" />Guardar cambios</>}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {pendingDeletePayment && (
+        <>
+          <div className="modal-backdrop fade show" />
+          <div className="modal fade show d-block" tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="delete-payment-title">
+            <div className="modal-dialog modal-dialog-centered" role="document">
+              <div className="modal-content border-0 shadow">
+                <div className="modal-header">
+                  <h5 className="modal-title" id="delete-payment-title">Confirmar eliminación</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    aria-label="Cerrar"
+                    onClick={() => setPendingDeletePayment(null)}
+                    disabled={isDeletingPayment}
+                  />
                 </div>
-                <div className="modal-footer bg-light">
-                  <button type="button" className="btn btn-secondary" onClick={() => setSelectedPaymentDetail(null)}>Cerrar</button>
+                <div className="modal-body">
+                  <p className="mb-0">¿Desea eliminar este pago?</p>
+                  {paymentDeleteError && <div className="alert alert-danger mt-3 mb-0" role="alert">{paymentDeleteError}</div>}
+                </div>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={() => setPendingDeletePayment(null)}
+                    disabled={isDeletingPayment}
+                  >
+                    NO
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-danger"
+                    onClick={() => void handleDeletePayment()}
+                    disabled={isDeletingPayment}
+                  >
+                    {isDeletingPayment ? <><span className="spinner-border spinner-border-sm me-2" aria-hidden="true" />Eliminando...</> : "SI"}
+                  </button>
                 </div>
               </div>
             </div>

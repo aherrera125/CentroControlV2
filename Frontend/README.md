@@ -1,133 +1,53 @@
-# Centro Control V2 - Frontend
+# Frontend - Centro Control V2
 
-Frontend limpio con React 19 y Bootstrap 5.
+Interfaz de usuario construida con React 19, TypeScript, React Router, Bootstrap 5 y Vite. Durante el desarrollo, Vite reenvía las solicitudes `/api` al backend en `http://localhost:3000` (configurado en `vite.config.ts`).
 
-## 📁 Estructura del Proyecto
+## Requisitos
 
-```
-src/
-├── components/          # Componentes reutilizables
-├── pages/              # Páginas de la aplicación
-├── layouts/            # Layouts principales
-├── assets/             # Imágenes, íconos, etc.
-├── App.tsx             # Componente raíz con rutas
-├── main.tsx            # Punto de entrada
-└── index.css           # Estilos globales
-```
+- Node.js y npm.
+- Backend activo y conectado a MySQL para utilizar las funciones que consumen la API.
 
-## 🚀 Comenzar
+## Instalación y ejecución
 
-### Instalar dependencias
 ```bash
 npm install
-```
-
-### Ejecutar en desarrollo
-```bash
 npm run dev
 ```
 
-### Compilar para producción
-```bash
-npm run build
+Vite muestra en la terminal la URL local de la aplicación.
+
+## Comandos
+
+| Comando | Descripción |
+| --- | --- |
+| `npm run dev` | Inicia el servidor local de Vite. |
+| `npm run build` | Comprueba TypeScript y crea la versión de producción en `dist/`. |
+| `npm run preview` | Sirve localmente la última compilación de `dist/`. |
+| `npm run lint` | Ejecuta ESLint sobre el frontend. |
+
+## Pantallas
+
+Las rutas están definidas en `src/App.tsx`:
+
+| Ruta | Función |
+| --- | --- |
+| `/` y `/socios` | Consulta y mantenimiento de socios. |
+| `/nuevo-socio` | Alta de socio. |
+| `/tipo-socio` | Administración de tipos de socio. |
+| `/pagos` | Registro de pagos e historial filtrado por socio; permite abrir el detalle editable y eliminar pagos con confirmación. |
+| `/reporte-pagos` | Reporte de pagos. |
+| `/reporte-socios` | Reporte de socios. |
+| `/usuarios` | Consulta y administración de usuarios. |
+| `/alta-usuarios` | Alta de usuario. |
+
+## Estructura
+
+```text
+src/
+├── assets/       # Recursos estáticos y estilos
+├── components/   # Pantallas y componentes de la aplicación
+├── App.tsx       # Rutas
+└── main.tsx      # Punto de entrada
 ```
 
-## 📦 Dependencias Principales
-
-- **React 19**: Framework UI
-- **React Router 7**: Sistema de rutas
-- **Bootstrap 5**: Framework CSS
-- **Vite**: Bundler y servidor de desarrollo
-- **TypeScript**: Tipado estático
-
-## 🛠️ Crear Nuevos Componentes
-
-### Componente Funcional Simple
-```tsx
-// src/components/MiComponente.tsx
-const MiComponente = () => {
-  return (
-    <div className="componente">
-      <h2>Mi Componente</h2>
-    </div>
-  );
-};
-
-export default MiComponente;
-```
-
-### Con Props e TypeScript
-```tsx
-interface MiComponenteProps {
-  titulo: string;
-  contenido: string;
-}
-
-const MiComponente = ({ titulo, contenido }: MiComponenteProps) => {
-  return (
-    <div className="componente">
-      <h2>{titulo}</h2>
-      <p>{contenido}</p>
-    </div>
-  );
-};
-
-export default MiComponente;
-```
-
-## 📄 Crear Nuevas Páginas
-
-```tsx
-// src/pages/MiPagina.tsx
-const MiPagina = () => {
-  return (
-    <div className="container py-5">
-      <h1>Mi Página</h1>
-    </div>
-  );
-};
-
-export default MiPagina;
-```
-
-## ➕ Agregar Rutas
-
-Edita `src/App.tsx` y agrega nuevas rutas:
-
-```tsx
-import MiPagina from "./pages/MiPagina";
-
-// Dentro de Routes:
-<Route path="/mi-pagina" element={<MiPagina />} />
-```
-
-## 🎨 Usar Bootstrap
-
-### Clases Útiles
-- `.container` - Contenedor responsive
-- `.row` - Fila de grid
-- `.col-md-*` - Columnas responsive
-- `.btn`, `.btn-primary` - Botones
-- `.card` - Tarjetas
-- `.navbar` - Navegación
-
-### Ejemplo
-```tsx
-<div className="container">
-  <div className="row">
-    <div className="col-md-6">
-      <button className="btn btn-primary">Enviar</button>
-    </div>
-  </div>
-</div>
-```
-
-## 📝 Linting
-
-```bash
-npm run lint
-```
-
----
-
-¡Listo para comenzar! Agrupa tus componentes en `src/components/` y tus páginas en `src/pages/`.
+Las solicitudes de datos se realizan a través de las rutas `/api` del backend. Para iniciar el backend, configurar MySQL y consultar los endpoints, sigue la [guía del backend](../Backend/README.md).
